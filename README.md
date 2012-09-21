@@ -1,13 +1,15 @@
-It is my initial project template. Based on AMD/RequireJS and CoffeeScript                                                                                                           
-                                                                                                                                                                                     
-###Dependency                                                                                                                                                                        
-* [jQuery](https://github.com/jquery/jquery)                                                                                                                                                                                                                                                              
+audio-editor
+=======
+It is my initial project template. Based on AMD/RequireJS and CoffeeScript
+
+###Dependency
+* [jQuery](https://github.com/jquery/jquery)
 * [Backbone](http://documentcloud.github.com/backbone)
 * [RequireJS](http://requirejs.org)
 
 ###Compile CoffeeScript
 
-    ./compileScript.sh
+    ./watch.sh
 
 ###Run Server
 It need to run on server, you can simply use:
@@ -22,3 +24,5 @@ and open
 Based on [require/r.js](http://requirejs.org/docs/optimization.html)
 
     ./build.sh
+============
+
