@@ -16,7 +16,7 @@ define (require)->
     onAudioProcess: ->
       unless @webAudio.paused
         @updatePercents()
-        @drawer.setCursorPercent @currentPercents
+        #@drawer.setCursorPercent @currentPercents
 
     updatePercents: ->
       d = @webAudio.ac.currentTime - @webAudio.lastPlay

@@ -6,7 +6,6 @@
     Drawer = {
       init: function(params) {
         this.canvas = params.canvas;
-        this.cursor = params.cursor;
         this.cc = this.canvas.getContext("2d");
         this.width = this.canvas.width;
         this.height = this.canvas.height;
@@ -69,24 +68,21 @@
         x = index;
         y = Math.round((this.height - h) / 2);
         return this.cc.fillRect(x, y, w, h);
-      },
-      drawCursor: function() {
-        if (this.cursor) {
-          return this.cursor.style.left = this.cursorPos + "px";
-        }
-      },
-      setCursorPercent: function(percents) {
-        var pos;
-        pos = Math.round(this.width * percents);
-        if (this.cursorPos !== pos) {
-          return this.updateCursor(pos);
-        }
-      },
-      updateCursor: function(pos) {
-        this.cursorPos = pos;
-        this.framePos = pos * this.framesPerPx;
-        return this.drawCursor();
       }
+      /*
+          drawCursor: ->
+            @cursor.style.left = @cursorPos + "px"  if @cursor
+      
+          setCursorPercent: (percents) ->
+            pos = Math.round(@width * percents)
+            @updateCursor pos  if @cursorPos isnt pos
+      
+          updateCursor: (pos) ->
+            @cursorPos = pos
+            @framePos = pos * @framesPerPx
+            @drawCursor()
+      */
+
     };
     return exports = Drawer;
   });

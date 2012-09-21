@@ -21,8 +21,7 @@
       },
       onAudioProcess: function() {
         if (!this.webAudio.paused) {
-          this.updatePercents();
-          return this.drawer.setCursorPercent(this.currentPercents);
+          return this.updatePercents();
         }
       },
       updatePercents: function() {

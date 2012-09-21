@@ -2,7 +2,7 @@ define (require)->
   Drawer =
     init: (params) ->
       @canvas = params.canvas
-      @cursor = params.cursor
+      #@cursor = params.cursor
       @cc = @canvas.getContext("2d")
       @width = @canvas.width
       @height = @canvas.height
@@ -36,7 +36,6 @@ define (require)->
         i++
       scale = 1 / maxsum
       i = 0
-
       while i < @width
         sum = 0
         c = 0
@@ -58,6 +57,7 @@ define (require)->
       y = Math.round((@height - h) / 2)
       @cc.fillRect x, y, w, h
 
+    ###
     drawCursor: ->
       @cursor.style.left = @cursorPos + "px"  if @cursor
 
@@ -69,5 +69,6 @@ define (require)->
       @cursorPos = pos
       @framePos = pos * @framesPerPx
       @drawCursor()
+    ###
 
   exports = Drawer
