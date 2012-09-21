@@ -2,17 +2,53 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>initial project</title>
+    <title>audio-editor</title>
+    <style>
+        .cursor {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            margin-left: -1px;
+            background: blue;
+        }
+        .timeline {
+            width: 1024px;
+            position: relative;
+            overflow: scroll;
+        }
+        #drop {
+            padding: 40px;
+            border: 1px dotted #333;
+            -webkit-user-drop: element;
+            display: inline-block;
+        }
+    </style>
   </head>
   <body>
+    <h1>Pick up a mp3</h1>
+    <input type="file" id="file">
+
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
     <script type="text/javascript" src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
 
     <script>
-    var require = {"baseUrl":'javascript'}
+    var require = {
+      "baseUrl":'javascript',
+      hbs : {
+        templateExtension : 'hbs',
+        disableI18n : true
+      },
+      paths  : {
+        'hbs' : 'vender/require-handlebars-plugin/hbs',
+        "i18nprecompile" : "vender/require-handlebars-plugin/i18nprecompile",
+        'handlebars' : 'vender/require-handlebars-plugin/Handlebars'
+      }
+    };
     </script>
-    <script data-main="main" src="http://requirejs.org/docs/release/1.0.7/minified/require.js"></script>
+    <script data-main="main" src="http://requirejs.org/docs/release/2.0.6/minified/require.js"></script>
   </body>
 </html>
 
