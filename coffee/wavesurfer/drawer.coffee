@@ -4,8 +4,9 @@ define (require)->
       @canvas = params.canvas
       #@cursor = params.cursor
       @cc = @canvas.getContext("2d")
-      @width = @canvas.width
-      @height = @canvas.height
+
+      @width = @canvas.width = params.width
+      @height = @canvas.height = params.height
       @cc.fillStyle = params.color  if params.color
 
     bindClick: (callback) ->

@@ -7,8 +7,8 @@
       init: function(params) {
         this.canvas = params.canvas;
         this.cc = this.canvas.getContext("2d");
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
+        this.width = this.canvas.width = params.width;
+        this.height = this.canvas.height = params.height;
         if (params.color) {
           return this.cc.fillStyle = params.color;
         }
