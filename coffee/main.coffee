@@ -19,6 +19,10 @@ define (require)->
 
 
     #$('.audio-editor').append(editorPanelView.$el)
+
+    $('#export').click(()->
+      wavesurfer.export()
+    )
   )
 
 

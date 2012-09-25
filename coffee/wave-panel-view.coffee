@@ -1,6 +1,6 @@
 define (require)->
-  wavePanel_tpl = require 'hbs!./wave-panel'
 
+  wavePanel_tpl = require 'hbs!./wave-panel'
   WavePanelView = Backbone.View.extend
     className: 'audio-editor'
     events:

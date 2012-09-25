@@ -18,7 +18,10 @@
         color: "#99CC00"
       });
       file = $(this).prop('files')[0];
-      return wavesurfer.loadFile(file);
+      wavesurfer.loadFile(file);
+      return $('#export').click(function() {
+        return wavesurfer["export"]();
+      });
     });
   });
 

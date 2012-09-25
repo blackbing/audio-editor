@@ -1,6 +1,8 @@
 define (require)->
   WebAudio = require('./webaudio')
   Drawer = require('./drawer')
+  WaveTrack = require './wavetrack'
+
   WaveSurfer =
     init: (params) ->
       @webAudio = WebAudio
@@ -39,6 +41,29 @@ define (require)->
         @playAt @currentPercents or 0
       else
         @pause()
+
+    export: ->
+      waveTrack = new WaveTrack()
+      sequenceList = []
+      currentBuffer = @webAudio.currentBuffer
+
+      c = 0
+
+      while c < currentBuffer.numberOfChannels
+        chan = currentBuffer.getChannelData(c)
+        console.log chan
+        chan.data = []
+        chan.sampleRate = currentBuffer.sampleRate
+        for cn in chan
+          chan.data.push(cn)
+        sequenceList.push(chan)
+        c++
+
+      console.log currentBuffer
+      console.log sequenceList
+      waveTrack.fromAudioSequences(sequenceList)
+      console.log waveTrack
+      console.log waveTrack.toBlobUrlAsync("application/octet-stream")
 
     draw: ->
       @drawer.drawBuffer @webAudio.currentBuffer

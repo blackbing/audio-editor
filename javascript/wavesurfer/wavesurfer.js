@@ -2,9 +2,10 @@
 (function() {
 
   define(function(require) {
-    var Drawer, WaveSurfer, WebAudio, exports;
+    var Drawer, WaveSurfer, WaveTrack, WebAudio, exports;
     WebAudio = require('./webaudio');
     Drawer = require('./drawer');
+    WaveTrack = require('./wavetrack');
     WaveSurfer = {
       init: function(params) {
         var _this = this;
@@ -46,6 +47,30 @@
         } else {
           return this.pause();
         }
+      },
+      "export": function() {
+        var c, chan, cn, currentBuffer, sequenceList, waveTrack, _i, _len;
+        waveTrack = new WaveTrack();
+        sequenceList = [];
+        currentBuffer = this.webAudio.currentBuffer;
+        c = 0;
+        while (c < currentBuffer.numberOfChannels) {
+          chan = currentBuffer.getChannelData(c);
+          console.log(chan);
+          chan.data = [];
+          chan.sampleRate = currentBuffer.sampleRate;
+          for (_i = 0, _len = chan.length; _i < _len; _i++) {
+            cn = chan[_i];
+            chan.data.push(cn);
+          }
+          sequenceList.push(chan);
+          c++;
+        }
+        console.log(currentBuffer);
+        console.log(sequenceList);
+        waveTrack.fromAudioSequences(sequenceList);
+        console.log(waveTrack);
+        return console.log(waveTrack.toBlobUrlAsync("application/octet-stream"));
       },
       draw: function() {
         return this.drawer.drawBuffer(this.webAudio.currentBuffer);
