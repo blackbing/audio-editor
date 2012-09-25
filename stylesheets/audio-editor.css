@@ -1,7 +1,15 @@
 /* line 4, ../sass/audio-editor.scss */
+#wave_container {
+  width: 1024;
+  height: 256px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* line 10, ../sass/audio-editor.scss */
 .audio-editor {
   width: 1024;
-  height: 280px;
+  height: 256px;
   position: absolute;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
@@ -13,14 +21,14 @@
   -ms-user-select: none;
   user-select: none;
 }
-/* line 18, ../sass/audio-editor.scss */
+/* line 24, ../sass/audio-editor.scss */
 .audio-editor canvas {
   width: 1024px;
   height: 256px;
   position: absolute;
   cursor: crosshair;
 }
-/* line 25, ../sass/audio-editor.scss */
+/* line 31, ../sass/audio-editor.scss */
 .audio-editor .audio-handler {
   border: 1px dashed black;
   width: 500px;

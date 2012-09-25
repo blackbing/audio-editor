@@ -5,11 +5,11 @@
     var WavePanelView, wavesurfer;
     wavesurfer = require('./wave/wavesurfer');
     WavePanelView = require('./wave-panel-view');
-    return $('#file').on('change', function() {
+    $('#file').on('change', function() {
       var file, wavePanelView;
       $('.audio-editor').remove();
       wavePanelView = new WavePanelView();
-      $('body').append(wavePanelView.$el);
+      $('#wave_container').append(wavePanelView.$el);
       wavesurfer.init({
         canvas: document.querySelector("#wave"),
         width: 1024,
@@ -22,6 +22,9 @@
       return $('#export').click(function() {
         return wavesurfer["export"]();
       });
+    });
+    return $('#choose').on('click', function() {
+      return $('#file').trigger('click');
     });
   });
 

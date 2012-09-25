@@ -6,7 +6,7 @@ define (require)->
     $('.audio-editor').remove()
     wavePanelView = new WavePanelView()
 
-    $('body').append(wavePanelView.$el)
+    $('#wave_container').append(wavePanelView.$el)
     wavesurfer.init
       canvas: document.querySelector("#wave")
       width: 1024
@@ -23,6 +23,10 @@ define (require)->
     $('#export').click(()->
       wavesurfer.export()
     )
+  )
+
+  $('#choose').on('click', ()->
+    $('#file').trigger('click')
   )
 
 
