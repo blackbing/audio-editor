@@ -3,7 +3,7 @@
 
   define(function(require) {
     var WavePanelView, wavesurfer;
-    wavesurfer = require('./wavesurfer/wavesurfer');
+    wavesurfer = require('./wave/wavesurfer');
     WavePanelView = require('./wave-panel-view');
     return $('#file').on('change', function() {
       var file, wavePanelView;

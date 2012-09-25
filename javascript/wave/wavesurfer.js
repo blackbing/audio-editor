@@ -3,7 +3,7 @@
 
   define(function(require) {
     var Drawer, WaveSurfer, WaveTrack, WebAudio, exports;
-    WebAudio = require('./webaudio');
+    WebAudio = require('../lib/webaudio');
     Drawer = require('./drawer');
     WaveTrack = require('./wavetrack');
     WaveSurfer = {

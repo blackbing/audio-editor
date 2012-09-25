@@ -1,7 +1,10 @@
 define (require)->
 
-  BinaryWriter = require('../binary-writer')
+  BinaryWriter = require('../lib/binary-writer')
+  BinaryReader = require('../lib/binary-reader')
 
+  BlobBuilder = window.WebKitBlobBuilder or window.MozBlobBuilder
+  URL = window.URL or window.webkitURL
 
   class WaveTrack
     convertIntToFloat = (value, waveBitsPerSample, signedBorder)->
@@ -38,7 +41,7 @@ define (require)->
 
         fileReader.readAsDataURL blob
       else
-        window.URL.createObjectURL blob
+        URL.createObjectURL blob
 
     decodeWaveFile: (data)->
       reader = new BinaryReader(data)

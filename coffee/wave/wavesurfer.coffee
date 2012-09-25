@@ -1,6 +1,6 @@
 define (require)->
-  WebAudio = require('./webaudio')
-  Drawer = require('./drawer')
+  WebAudio = require '../lib/webaudio'
+  Drawer = require './drawer'
   WaveTrack = require './wavetrack'
 
   WaveSurfer =
