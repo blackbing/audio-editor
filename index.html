@@ -7,6 +7,8 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <link href="stylesheets/audio-editor.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/ui-lightness/jquery-ui-1.8.23.custom.css" media="screen" rel="stylesheet" type="text/css" />
 
     <title>Audio-editor by blackbing</title>
   </head>
@@ -28,8 +30,9 @@
 
     <div class="container">
       <section id="main_content">
-        <h1>audio-editor</h1>
-
+        <h1>Pick up a mp3</h1>
+        <input type="file" id="file">
+        <div id="wave_container"></div>
 <p>It is my initial project template. Based on AMD/RequireJS and CoffeeScript</p>
 
 <h3>Dependency</h3>
@@ -66,6 +69,26 @@
       </section>
     </div>
 
-    
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
+    <script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+    <script src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+
+    <script>
+    var require = {
+      "baseUrl":'javascript',
+      hbs : {
+        templateExtension : 'hbs',
+        disableI18n : true
+      },
+      paths  : {
+        'hbs' : 'vender/require-handlebars-plugin/hbs',
+        "i18nprecompile" : "vender/require-handlebars-plugin/i18nprecompile",
+        'handlebars' : 'vender/require-handlebars-plugin/Handlebars'
+      }
+    };
+    </script>
+    <script data-main="main" src="http://requirejs.org/docs/release/2.0.6/minified/require.js"></script>
   </body>
 </html>
