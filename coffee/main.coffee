@@ -1,26 +1,26 @@
 define (require)->
-  wavePanel = require 'hbs!./wave-panel'
   wavesurfer = require './wavesurfer/wavesurfer'
-  EditorPanelView = require './edit-handler'
+  WavePanelView = require './wave-panel-view'
 
-  $('body').append(wavePanel())
   $('#file').on('change', ()->
+    $('.audio-editor').remove()
+    wavePanelView = new WavePanelView()
+
+    $('body').append(wavePanelView.$el)
+    wavesurfer.init
+      canvas: document.querySelector("#wave")
+      width: 1024
+      height: 256
+      cursor: document.querySelector("#wave-cursor")
+      color: "#99CC00"
+
     file = $(@).prop('files')[0]
     wavesurfer.loadFile(file)
 
-    editorPanelView = new EditorPanelView(
-      container: $('.audio-editor')
-    )
 
-    $('.audio-editor').append(editorPanelView.$el)
+    #$('.audio-editor').append(editorPanelView.$el)
   )
 
 
-  wavesurfer.init
-    canvas: document.querySelector("#wave")
-    width: 1024
-    height: 256
-    cursor: document.querySelector("#wave-cursor")
-    color: "#99CC00"
 
   #wavesurfer.bindDragNDrop()

@@ -10,8 +10,11 @@ define (require)->
       @webAudio.proc.onaudioprocess = =>
         @onAudioProcess()
 
+      ###
       @drawer.bindClick (percents)=>
         @playAt percents
+
+      ###
 
     onAudioProcess: ->
       unless @webAudio.paused

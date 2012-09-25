@@ -12,12 +12,14 @@
         this.webAudio.init(params);
         this.drawer = Drawer;
         this.drawer.init(params);
-        this.webAudio.proc.onaudioprocess = function() {
+        return this.webAudio.proc.onaudioprocess = function() {
           return _this.onAudioProcess();
         };
-        return this.drawer.bindClick(function(percents) {
-          return _this.playAt(percents);
-        });
+        /*
+              @drawer.bindClick (percents)=>
+                @playAt percents
+        */
+
       },
       onAudioProcess: function() {
         if (!this.webAudio.paused) {

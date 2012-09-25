@@ -2,26 +2,23 @@
 (function() {
 
   define(function(require) {
-    var EditorPanelView, wavePanel, wavesurfer;
-    wavePanel = require('hbs!./wave-panel');
+    var WavePanelView, wavesurfer;
     wavesurfer = require('./wavesurfer/wavesurfer');
-    EditorPanelView = require('./edit-handler');
-    $('body').append(wavePanel());
-    $('#file').on('change', function() {
-      var editorPanelView, file;
-      file = $(this).prop('files')[0];
-      wavesurfer.loadFile(file);
-      editorPanelView = new EditorPanelView({
-        container: $('.audio-editor')
+    WavePanelView = require('./wave-panel-view');
+    return $('#file').on('change', function() {
+      var file, wavePanelView;
+      $('.audio-editor').remove();
+      wavePanelView = new WavePanelView();
+      $('body').append(wavePanelView.$el);
+      wavesurfer.init({
+        canvas: document.querySelector("#wave"),
+        width: 1024,
+        height: 256,
+        cursor: document.querySelector("#wave-cursor"),
+        color: "#99CC00"
       });
-      return $('.audio-editor').append(editorPanelView.$el);
-    });
-    return wavesurfer.init({
-      canvas: document.querySelector("#wave"),
-      width: 1024,
-      height: 256,
-      cursor: document.querySelector("#wave-cursor"),
-      color: "#99CC00"
+      file = $(this).prop('files')[0];
+      return wavesurfer.loadFile(file);
     });
   });
 
