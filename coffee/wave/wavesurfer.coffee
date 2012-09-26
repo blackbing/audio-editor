@@ -42,6 +42,15 @@ define (require)->
       else
         @pause()
 
+    setSelection: ()->
+      ##
+
+    getSelection: ()->
+      ##
+
+
+
+
     export: ->
       waveTrack = new WaveTrack()
       sequenceList = []
@@ -56,8 +65,11 @@ define (require)->
         chan.sampleRate = currentBuffer.sampleRate
         for cn in chan
           chan.data.push(cn)
+        ##for testing
+        chan.data = chan.data.slice(chan.data.length/2, chan.data.length)
         sequenceList.push(chan)
         c++
+
 
       console.log currentBuffer
       console.log sequenceList

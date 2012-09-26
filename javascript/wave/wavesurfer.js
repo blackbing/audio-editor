@@ -48,6 +48,8 @@
           return this.pause();
         }
       },
+      setSelection: function() {},
+      getSelection: function() {},
       "export": function() {
         var c, chan, cn, currentBuffer, sequenceList, waveTrack, _i, _len;
         waveTrack = new WaveTrack();
@@ -63,6 +65,7 @@
             cn = chan[_i];
             chan.data.push(cn);
           }
+          chan.data = chan.data.slice(chan.data.length / 2, chan.data.length);
           sequenceList.push(chan);
           c++;
         }
