@@ -51,7 +51,7 @@
       setSelection: function() {},
       getSelection: function() {},
       "export": function() {
-        var c, chan, cn, currentBuffer, sequenceList, waveTrack, _i, _len;
+        var blobURL, c, chan, cn, currentBuffer, downloadLink, sequenceList, waveTrack, _i, _len;
         waveTrack = new WaveTrack();
         sequenceList = [];
         currentBuffer = this.webAudio.currentBuffer;
@@ -69,11 +69,10 @@
           sequenceList.push(chan);
           c++;
         }
-        console.log(currentBuffer);
-        console.log(sequenceList);
         waveTrack.fromAudioSequences(sequenceList);
-        console.log(waveTrack);
-        return console.log(waveTrack.toBlobUrlAsync("application/octet-stream"));
+        blobURL = waveTrack.toBlobUrl("application/octet-stream");
+        downloadLink = $('<a download="export.wav" href="' + blobURL + '"/>');
+        return downloadLink[0].click();
       },
       draw: function() {
         return this.drawer.drawBuffer(this.webAudio.currentBuffer);

@@ -30,14 +30,16 @@
       draggingOnCanvas: function(event) {
         var deltaX, left, originalPosition;
         originalPosition = this.$('canvas').data('originalPosition');
+        console.log(originalPosition);
         deltaX = event.clientX - originalPosition.x;
+        console.log(deltaX);
         if (!deltaX) {
           return;
         }
         if (deltaX > 0) {
-          left = originalPosition.x - this.$el.position().left;
+          left = originalPosition.x - this.$el.offset().left;
         } else {
-          left = originalPosition.x - this.$el.position().left + deltaX;
+          left = originalPosition.x - this.$el.offset().left + deltaX;
         }
         return this.$('.audio-handler').css({
           'width': Math.abs(deltaX),

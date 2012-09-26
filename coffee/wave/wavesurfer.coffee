@@ -71,11 +71,10 @@ define (require)->
         c++
 
 
-      console.log currentBuffer
-      console.log sequenceList
       waveTrack.fromAudioSequences(sequenceList)
-      console.log waveTrack
-      console.log waveTrack.toBlobUrlAsync("application/octet-stream")
+      blobURL = waveTrack.toBlobUrl("application/octet-stream")
+      downloadLink = $('<a download="export.wav" href="'+blobURL+'"/>')
+      downloadLink[0].click()
 
     draw: ->
       @drawer.drawBuffer @webAudio.currentBuffer

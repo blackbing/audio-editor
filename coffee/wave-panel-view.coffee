@@ -27,16 +27,20 @@ define (require)->
     draggingOnCanvas: (event)->
 
       originalPosition = @$('canvas').data('originalPosition')
+      console.log originalPosition
 
       deltaX = event.clientX - originalPosition.x
+      console.log deltaX
 
       if not deltaX
         return
 
       if deltaX>0
-        left = originalPosition.x - @$el.position().left
+        left = originalPosition.x - @$el.offset().left
       else
-        left = originalPosition.x - @$el.position().left + deltaX
+        left = originalPosition.x - @$el.offset().left + deltaX
+
+
 
       @$('.audio-handler')
         .css(

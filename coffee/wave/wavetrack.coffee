@@ -28,20 +28,14 @@ define (require)->
       @audioSequences = sequences
       null
 
-    toBlobUrlAsync: (encoding, asyncMethod, host)->
+    toBlobUrl: (encoding)->
       encodedWave = @encodeWaveFile()
       bb = new BlobBuilder()
       blob = undefined
       bb.append encodedWave.buffer
       blob = bb.getBlob(encoding)
-      if asyncMethod isnt `undefined`
-        fileReader = new FileReader()
-        fileReader.onloadend = (e) ->
-          asyncMethod fileReader.result, host
 
-        fileReader.readAsDataURL blob
-      else
-        URL.createObjectURL blob
+      URL.createObjectURL blob
 
     decodeWaveFile: (data)->
       reader = new BinaryReader(data)

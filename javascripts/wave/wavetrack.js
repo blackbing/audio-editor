@@ -61,22 +61,14 @@
         return null;
       };
 
-      WaveTrack.prototype.toBlobUrlAsync = function(encoding, asyncMethod, host) {
-        var bb, blob, encodedWave, fileReader;
+      WaveTrack.prototype.toBlobUrl = function(encoding) {
+        var bb, blob, encodedWave;
         encodedWave = this.encodeWaveFile();
         bb = new BlobBuilder();
         blob = void 0;
         bb.append(encodedWave.buffer);
         blob = bb.getBlob(encoding);
-        if (asyncMethod !== undefined) {
-          fileReader = new FileReader();
-          fileReader.onloadend = function(e) {
-            return asyncMethod(fileReader.result, host);
-          };
-          return fileReader.readAsDataURL(blob);
-        } else {
-          return URL.createObjectURL(blob);
-        }
+        return URL.createObjectURL(blob);
       };
 
       WaveTrack.prototype.decodeWaveFile = function(data) {
