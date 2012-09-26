@@ -1,7 +1,7 @@
 define (require)->
 
-  BinaryWriter = require('../lib/binary-writer')
-  BinaryReader = require('../lib/binary-reader')
+  BinaryWriter = require('../binary-writer')
+  BinaryReader = require('../binary-reader')
 
   BlobBuilder = window.WebKitBlobBuilder or window.MozBlobBuilder
   URL = window.URL or window.webkitURL

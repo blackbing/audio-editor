@@ -1,5 +1,5 @@
 define (require)->
-  WebAudio = require '../lib/webaudio'
+  WebAudio = require '../webaudio'
   Drawer = require './drawer'
   WaveTrack = require './wavetrack'
 

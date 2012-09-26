@@ -3,8 +3,8 @@
 
   define(function(require) {
     var BinaryReader, BinaryWriter, BlobBuilder, Complex, FFTComplex, URL, WaveTrack, printComplexArray;
-    BinaryWriter = require('../lib/binary-writer');
-    BinaryReader = require('../lib/binary-reader');
+    BinaryWriter = require('../binary-writer');
+    BinaryReader = require('../binary-reader');
     BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
     URL = window.URL || window.webkitURL;
     WaveTrack = (function() {

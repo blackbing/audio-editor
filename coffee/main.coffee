@@ -1,5 +1,5 @@
 define (require)->
-  wavesurfer = require './wave/wavesurfer'
+  wavesurfer = require './lib/wave/wavesurfer'
   WavePanelView = require './wave-panel-view'
 
   $('#file').on('change', ()->
