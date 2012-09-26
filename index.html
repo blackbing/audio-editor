@@ -37,11 +37,17 @@
       <section class="inner">
         <h1>Pick up a mp3</h1>
         <div id="wave_container"></div>
-        <input type="file" id="file" style="display:none">
-        <button id="choose" class="btn">choose Mp3</button>
-        <button id="fadeIn" class="btn">fadeIn</button>
-        <button id="fadeOut" class="btn">fadeOut</button>
-        <button id="export" class="btn">export</button>
+        <div>
+          <input type="file" id="file" style="display:none">
+          <button id="choose" class="btn btn-primary">choose Mp3</button>
+          <span class="btn-group control-tool">
+            <button id="play" class="btn">Play</button>
+            <button id="fadeIn" class="btn">FadeIn</button>
+            <button id="fadeOut" class="btn">FadeOut</button>
+            <button id="mute" class="btn">Mute</button>
+          </span>
+          <button id="export" class="btn btn-success">export</button>
+        </div>
       </section>
       <section id="main_content" class="inner">
 

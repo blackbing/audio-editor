@@ -30,9 +30,7 @@
       draggingOnCanvas: function(event) {
         var deltaX, left, originalPosition;
         originalPosition = this.$('canvas').data('originalPosition');
-        console.log(originalPosition);
         deltaX = event.clientX - originalPosition.x;
-        console.log(deltaX);
         if (!deltaX) {
           return;
         }
@@ -46,14 +44,21 @@
           'left': left
         });
       },
+      selectionResized: function() {
+        return console.log('selectionResized');
+      },
       initialize: function() {
+        var _this = this;
         this.$el.append(wavePanel_tpl());
         return this.$('.audio-handler').draggable({
           containment: 'parent',
           axis: "x"
         }).resizable({
           containment: "parent",
-          handles: "e, w"
+          handles: "e, w",
+          resize: function() {
+            return _this.selectionResized.apply(_this, arguments);
+          }
         });
       }
     });

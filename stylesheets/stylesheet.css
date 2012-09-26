@@ -429,3 +429,15 @@ Small Device Styles
   }
 
 }
+
+.control-tool{
+  display: inline;
+  margin-left: 10px;
+  top: 3px;
+
+}
+
+#export{
+  float: right;
+  margin-right: 5px;
+}

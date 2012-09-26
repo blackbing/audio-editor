@@ -27,10 +27,8 @@ define (require)->
     draggingOnCanvas: (event)->
 
       originalPosition = @$('canvas').data('originalPosition')
-      console.log originalPosition
 
       deltaX = event.clientX - originalPosition.x
-      console.log deltaX
 
       if not deltaX
         return
@@ -49,6 +47,9 @@ define (require)->
         )
 
 
+    selectionResized: ()->
+      console.log 'selectionResized'
+
 
     initialize: ->
       @$el.append(wavePanel_tpl())
@@ -60,6 +61,8 @@ define (require)->
       .resizable(
         containment: "parent"
         handles: "e, w"
+        resize: ()=>
+          @selectionResized.apply(@, arguments)
       )
 
 
