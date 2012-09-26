@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Audio-editor : audio-editor, Web Audio, crop audio online, html5" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <link href="stylesheets/audio-editor.css" media="screen" rel="stylesheet" type="text/css" />
     <link href="stylesheets/ui-lightness/jquery-ui-1.8.23.custom.css" media="screen" rel="stylesheet" type="text/css" />
 
-    <title>Audio-editor by blackbing</title>
+    <title>Audio-editor</title>
   </head>
 
   <body>
 
-    <header>
-      <div class="container">
-        <h1>Audio-editor</h1>
-        <h2>audio-editor, Web Audio, crop audio online, html5</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/blackbing/audio-editor">View on GitHub</a>
 
-        <section id="downloads">
-          <a href="https://github.com/blackbing/audio-editor/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/blackbing/audio-editor/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/blackbing/audio-editor" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+          <h1 id="project_title">Audio-editor</h1>
+          <h2 id="project_tagline">audio-editor, Web Audio, crop audio online, html5</h2>
 
-    <div class="container">
-      <section id="main_content">
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/blackbing/audio-editor/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/blackbing/audio-editor/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+
+      <section class="inner">
         <h1>Pick up a mp3</h1>
         <div id="wave_container"></div>
         <input type="file" id="file" style="display:none">
@@ -37,7 +41,15 @@
         <button id="fadeIn" class="btn">fadeIn</button>
         <button id="fadeOut" class="btn">fadeOut</button>
         <button id="export" class="btn">export</button>
-<p>It is my initial project template. Based on AMD/RequireJS and CoffeeScript</p>
+      </section>
+      <section id="main_content" class="inner">
+
+<h2>Introduction</h2>
+
+<p>Web Audio API provides a deep way to handle audio data, but it is not easy to slice an audio.
+This is a simple tool to crop an audio file form your local and generate a downloadable file.</p>
+
+<h2>Development</h2>
 
 <h3>Dependency</h3>
 
@@ -73,6 +85,15 @@
       </section>
     </div>
 
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Audio-editor maintained by <a href="https://github.com/blackbing">blackbing</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
@@ -81,7 +102,7 @@
 
     <script>
     var require = {
-      "baseUrl":'javascript',
+      "baseUrl":'javascripts',
       hbs : {
         templateExtension : 'hbs',
         disableI18n : true

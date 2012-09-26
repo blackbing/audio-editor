@@ -2,10 +2,10 @@
 @import 'compass/css3';
 
 #wave_container{
-  width: 1024;
+  width: 1024px;
   height: 256px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 10px;
+  @include single-box-shadow;
 }
 .audio-editor{
   width: 1024;

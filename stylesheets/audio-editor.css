@@ -1,9 +1,11 @@
 /* line 4, ../sass/audio-editor.scss */
 #wave_container {
-  width: 1024;
+  width: 1024px;
   height: 256px;
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-bottom: 10px;
+  -webkit-box-shadow: 0px 0px 5px #333333;
+  -moz-box-shadow: 0px 0px 5px #333333;
+  box-shadow: 0px 0px 5px #333333;
 }
 
 /* line 10, ../sass/audio-editor.scss */
