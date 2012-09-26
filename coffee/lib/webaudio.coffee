@@ -63,4 +63,8 @@ define (require)->
       @analyser.getByteFrequencyData @dataArray
       @dataArray
 
+    setSelection: (from, to)->
+
+      ##
+
   exports = WebAudio

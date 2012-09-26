@@ -70,7 +70,8 @@
       frequency: function() {
         this.analyser.getByteFrequencyData(this.dataArray);
         return this.dataArray;
-      }
+      },
+      setSelection: function(from, to) {}
     };
     return exports = WebAudio;
   });
