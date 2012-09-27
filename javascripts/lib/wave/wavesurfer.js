@@ -48,8 +48,17 @@
           return this.pause();
         }
       },
-      setSelection: function() {},
-      getSelection: function() {},
+      setSelection: function(from, to) {
+        console.log('setSelection');
+        this.selection = {
+          from: from,
+          to: to
+        };
+        return console.log(this.selection);
+      },
+      getSelection: function() {
+        return this.selection;
+      },
       "export": function() {
         var blobURL, c, chan, cn, currentBuffer, downloadLink, sequenceList, waveTrack, _i, _len;
         waveTrack = new WaveTrack();

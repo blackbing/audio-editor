@@ -2,26 +2,25 @@
 (function() {
 
   define(function(require) {
-    var WavePanelView, wavesurfer;
-    wavesurfer = require('./lib/wave/wavesurfer');
+    var WavePanelView;
     WavePanelView = require('./wave-panel-view');
     $('#file').on('change', function() {
       var file, wavePanelView;
       $('.audio-editor').remove();
-      wavePanelView = new WavePanelView();
-      $('#wave_container').append(wavePanelView.$el);
-      wavesurfer.init({
-        canvas: document.querySelector("#wave"),
+      wavePanelView = new WavePanelView({
         width: 1024,
         height: 256,
-        cursor: document.querySelector("#wave-cursor"),
-        color: "#99CC00"
+        color: '#99CC00'
       });
+      $('#wave_container').append(wavePanelView.$el);
       file = $(this).prop('files')[0];
-      wavesurfer.loadFile(file);
-      return $('#export').click(function() {
-        return wavesurfer["export"]();
-      });
+      return wavePanelView.loadFile(file);
+      /*
+          $('#export').click(()->
+            wavesurfer.export()
+          )
+      */
+
     });
     return $('#choose').on('click', function() {
       return $('#file').trigger('click');

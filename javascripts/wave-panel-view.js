@@ -2,7 +2,8 @@
 (function() {
 
   define(function(require) {
-    var WavePanelView, wavePanel_tpl;
+    var WavePanelView, wavePanel_tpl, wavesurfer;
+    wavesurfer = require('./lib/wave/wavesurfer');
     wavePanel_tpl = require('hbs!./wave-panel');
     return WavePanelView = Backbone.View.extend({
       className: 'audio-editor',
@@ -39,27 +40,47 @@
         } else {
           left = originalPosition.x - this.$el.offset().left + deltaX;
         }
-        return this.$('.audio-handler').css({
+        this.audioHandler.css({
           'width': Math.abs(deltaX),
           'left': left
         });
+        return this.selectionChanged();
       },
-      selectionResized: function() {
-        return console.log('selectionResized');
+      selectionChanged: function() {
+        var from, left, to, width;
+        left = parseFloat(this.audioHandler.css('left'));
+        width = this.audioHandler.outerWidth();
+        from = left / this.canvasWidth;
+        to = (left + width) / this.canvasWidth;
+        return wavesurfer.setSelection(from, to);
       },
-      initialize: function() {
+      initialize: function(options) {
         var _this = this;
         this.$el.append(wavePanel_tpl());
-        return this.$('.audio-handler').draggable({
+        wavesurfer.init({
+          canvas: this.$('canvas')[0],
+          width: options.width,
+          height: options.height,
+          color: options.color
+        });
+        this.audioHandler = this.$('.audio-handler');
+        this.canvasWidth = options.width;
+        return this.audioHandler.draggable({
           containment: 'parent',
-          axis: "x"
+          axis: "x",
+          drag: function() {
+            return _this.selectionChanged.apply(_this, arguments);
+          }
         }).resizable({
           containment: "parent",
           handles: "e, w",
           resize: function() {
-            return _this.selectionResized.apply(_this, arguments);
+            return _this.selectionChanged.apply(_this, arguments);
           }
         });
+      },
+      loadFile: function(file) {
+        return wavesurfer.loadFile(file);
       }
     });
   });

@@ -42,11 +42,17 @@ define (require)->
       else
         @pause()
 
-    setSelection: ()->
+    setSelection: (from, to)->
+      console.log 'setSelection'
       ##
+      @selection =
+        from: from
+        to: to
+      console.log @selection
 
     getSelection: ()->
       ##
+      @selection
 
 
 

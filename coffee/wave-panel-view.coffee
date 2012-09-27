@@ -1,6 +1,9 @@
 define (require)->
 
+  wavesurfer = require './lib/wave/wavesurfer'
   wavePanel_tpl = require 'hbs!./wave-panel'
+
+
   WavePanelView = Backbone.View.extend
     className: 'audio-editor'
     events:
@@ -40,30 +43,57 @@ define (require)->
 
 
 
-      @$('.audio-handler')
+      @audioHandler
         .css(
           'width': Math.abs(deltaX)
           'left': left
         )
 
+      @selectionChanged()
 
-    selectionResized: ()->
-      console.log 'selectionResized'
+    selectionChanged: ()->
+      left = parseFloat(@audioHandler.css('left'))
+      width = @audioHandler.outerWidth()
 
+      from = left/@canvasWidth
+      to = (left+width)/@canvasWidth
 
-    initialize: ->
+      wavesurfer.setSelection(from, to)
+
+    initialize: (options)->
       @$el.append(wavePanel_tpl())
-      @$('.audio-handler')
+
+
+      wavesurfer.init
+        canvas: @$('canvas')[0]
+        width: options.width
+        height: options.height
+        #cursor: document.querySelector("#wave-cursor")
+        color: options.color
+
+
+
+
+      @audioHandler = @$('.audio-handler')
+      @canvasWidth = options.width
+
+      @audioHandler
       .draggable(
         containment: 'parent'
         axis: "x"
+        drag: ()=>
+          @selectionChanged.apply(@, arguments)
       )
       .resizable(
         containment: "parent"
         handles: "e, w"
         resize: ()=>
-          @selectionResized.apply(@, arguments)
+          @selectionChanged.apply(@, arguments)
       )
+
+    loadFile: (file)->
+
+      wavesurfer.loadFile(file)
 
 
 
