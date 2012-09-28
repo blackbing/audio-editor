@@ -60,6 +60,9 @@ define (require)->
 
       wavesurfer.setSelection(from, to)
 
+    exportAudio: ()->
+      wavesurfer.export()
+
     initialize: (options)->
       @$el.append(wavePanel_tpl())
 

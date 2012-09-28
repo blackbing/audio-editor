@@ -1,7 +1,6 @@
 define (require)->
-  WebAudio = require '../webaudio'
+  WebAudio = require './webaudio'
   Drawer = require './drawer'
-  WaveTrack = require './wavetrack'
 
   WaveSurfer =
     init: (params) ->
@@ -43,7 +42,6 @@ define (require)->
         @pause()
 
     setSelection: (from, to)->
-      console.log 'setSelection'
       ##
       @selection =
         from: from
@@ -58,27 +56,9 @@ define (require)->
 
 
     export: ->
-      waveTrack = new WaveTrack()
-      sequenceList = []
-      currentBuffer = @webAudio.currentBuffer
 
-      c = 0
+      blobURL = @webAudio.export()
 
-      while c < currentBuffer.numberOfChannels
-        chan = currentBuffer.getChannelData(c)
-        console.log chan
-        chan.data = []
-        chan.sampleRate = currentBuffer.sampleRate
-        for cn in chan
-          chan.data.push(cn)
-        ##for testing
-        chan.data = chan.data.slice(chan.data.length/2, chan.data.length)
-        sequenceList.push(chan)
-        c++
-
-
-      waveTrack.fromAudioSequences(sequenceList)
-      blobURL = waveTrack.toBlobUrl("application/octet-stream")
       downloadLink = $('<a download="export.wav" href="'+blobURL+'"/>')
       downloadLink[0].click()
 

@@ -54,6 +54,9 @@
         to = (left + width) / this.canvasWidth;
         return wavesurfer.setSelection(from, to);
       },
+      exportAudio: function() {
+        return wavesurfer["export"]();
+      },
       initialize: function(options) {
         var _this = this;
         this.$el.append(wavePanel_tpl());

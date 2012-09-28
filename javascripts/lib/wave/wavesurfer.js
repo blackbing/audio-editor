@@ -2,10 +2,9 @@
 (function() {
 
   define(function(require) {
-    var Drawer, WaveSurfer, WaveTrack, WebAudio, exports;
-    WebAudio = require('../webaudio');
+    var Drawer, WaveSurfer, WebAudio, exports;
+    WebAudio = require('./webaudio');
     Drawer = require('./drawer');
-    WaveTrack = require('./wavetrack');
     WaveSurfer = {
       init: function(params) {
         var _this = this;
@@ -49,7 +48,6 @@
         }
       },
       setSelection: function(from, to) {
-        console.log('setSelection');
         this.selection = {
           from: from,
           to: to
@@ -60,26 +58,8 @@
         return this.selection;
       },
       "export": function() {
-        var blobURL, c, chan, cn, currentBuffer, downloadLink, sequenceList, waveTrack, _i, _len;
-        waveTrack = new WaveTrack();
-        sequenceList = [];
-        currentBuffer = this.webAudio.currentBuffer;
-        c = 0;
-        while (c < currentBuffer.numberOfChannels) {
-          chan = currentBuffer.getChannelData(c);
-          console.log(chan);
-          chan.data = [];
-          chan.sampleRate = currentBuffer.sampleRate;
-          for (_i = 0, _len = chan.length; _i < _len; _i++) {
-            cn = chan[_i];
-            chan.data.push(cn);
-          }
-          chan.data = chan.data.slice(chan.data.length / 2, chan.data.length);
-          sequenceList.push(chan);
-          c++;
-        }
-        waveTrack.fromAudioSequences(sequenceList);
-        blobURL = waveTrack.toBlobUrl("application/octet-stream");
+        var blobURL, downloadLink;
+        blobURL = this.webAudio["export"]();
         downloadLink = $('<a download="export.wav" href="' + blobURL + '"/>');
         return downloadLink[0].click();
       },

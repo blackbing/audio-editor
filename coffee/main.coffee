@@ -1,6 +1,7 @@
 define (require)->
   WavePanelView = require './wave-panel-view'
 
+  wavePanelView = null
   $('#file').on('change', ()->
     $('.audio-editor').remove()
     wavePanelView = new WavePanelView(
@@ -17,15 +18,13 @@ define (require)->
 
     #$('.audio-editor').append(editorPanelView.$el)
 
-    ###
-    $('#export').click(()->
-      wavesurfer.export()
-    )
-    ###
   )
 
   $('#choose').on('click', ()->
     $('#file').trigger('click')
+  )
+  $('#export').click(()->
+    wavePanelView.exportAudio()
   )
 
 

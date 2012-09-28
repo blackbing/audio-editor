@@ -1,5 +1,7 @@
 define (require)->
 
+  WaveTrack = require './wavetrack'
+
   WebAudio =
     Defaults:
       fftSize: 1024
@@ -19,6 +21,9 @@ define (require)->
       @dataArray = new Uint8Array(@analyser.fftSize)
       @paused = true
 
+      currentBuffer = @currentBuffer
+      console.log currentBuffer
+
     setSource: (source) ->
       @source and @source.disconnect()
       @source = source
@@ -26,13 +31,26 @@ define (require)->
       @source.connect @proc
 
     loadData: (audioData, cb) ->
-      self = this
-      @ac.decodeAudioData audioData, ((buffer) ->
-        self.currentBuffer = buffer
-        self.lastPause = 0
-        self.lastPlay = 0
+      @ac.decodeAudioData audioData, ((buffer) =>
+        @currentBuffer = buffer
+        @lastPause = 0
+        @lastPlay = 0
+        @preSetBuffer(@currentBuffer)
         cb buffer
       ), Error
+      console.log @ac
+
+    preSetBuffer: (buffer)->
+      currentBuffer = buffer
+      currentBufferData = []
+      while c < currentBuffer.numberOfChannels
+
+        #do something
+        console.log c
+
+
+
+
 
     getDuration: ->
       @currentBuffer and @currentBuffer.duration
@@ -66,5 +84,30 @@ define (require)->
     setSelection: (from, to)->
 
       ##
+
+    export: ->
+      waveTrack = new WaveTrack()
+      sequenceList = []
+      currentBuffer = @currentBuffer
+
+      c = 0
+
+      while c < currentBuffer.numberOfChannels
+        chan = currentBuffer.getChannelData(c)
+        console.log chan
+        chan.data = []
+        chan.sampleRate = currentBuffer.sampleRate
+        for cn in chan
+          chan.data.push(cn)
+        ##for testing
+        chan.data = chan.data.slice(chan.data.length/2, chan.data.length)
+        sequenceList.push(chan)
+        c++
+
+
+      waveTrack.fromAudioSequences(sequenceList)
+      blobURL = waveTrack.toBlobUrl("application/octet-stream")
+      blobURL
+
 
   exports = WebAudio

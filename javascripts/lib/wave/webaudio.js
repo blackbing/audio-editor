@@ -2,7 +2,8 @@
 (function() {
 
   define(function(require) {
-    var WebAudio, exports;
+    var WaveTrack, WebAudio, exports;
+    WaveTrack = require('./wavetrack');
     WebAudio = {
       Defaults: {
         fftSize: 1024,
@@ -10,6 +11,7 @@
       },
       ac: new (window.AudioContext || window.webkitAudioContext),
       init: function(params) {
+        var currentBuffer;
         params = params || {};
         this.fftSize = params.fftSize || this.Defaults.fftSize;
         this.destination = params.destination || this.ac.destination;
@@ -20,7 +22,9 @@
         this.proc = this.ac.createJavaScriptNode(this.fftSize / 2, 1, 1);
         this.proc.connect(this.destination);
         this.dataArray = new Uint8Array(this.analyser.fftSize);
-        return this.paused = true;
+        this.paused = true;
+        currentBuffer = this.currentBuffer;
+        return console.log(currentBuffer);
       },
       setSource: function(source) {
         this.source && this.source.disconnect();
@@ -29,14 +33,25 @@
         return this.source.connect(this.proc);
       },
       loadData: function(audioData, cb) {
-        var self;
-        self = this;
-        return this.ac.decodeAudioData(audioData, (function(buffer) {
-          self.currentBuffer = buffer;
-          self.lastPause = 0;
-          self.lastPlay = 0;
+        var _this = this;
+        this.ac.decodeAudioData(audioData, (function(buffer) {
+          _this.currentBuffer = buffer;
+          _this.lastPause = 0;
+          _this.lastPlay = 0;
+          _this.preSetBuffer(_this.currentBuffer);
           return cb(buffer);
         }), Error);
+        return console.log(this.ac);
+      },
+      preSetBuffer: function(buffer) {
+        var currentBuffer, currentBufferData, _results;
+        currentBuffer = buffer;
+        currentBufferData = [];
+        _results = [];
+        while (c < currentBuffer.numberOfChannels) {
+          _results.push(console.log(c));
+        }
+        return _results;
       },
       getDuration: function() {
         return this.currentBuffer && this.currentBuffer.duration;
@@ -71,7 +86,30 @@
         this.analyser.getByteFrequencyData(this.dataArray);
         return this.dataArray;
       },
-      setSelection: function(from, to) {}
+      setSelection: function(from, to) {},
+      "export": function() {
+        var blobURL, c, chan, cn, currentBuffer, sequenceList, waveTrack, _i, _len;
+        waveTrack = new WaveTrack();
+        sequenceList = [];
+        currentBuffer = this.currentBuffer;
+        c = 0;
+        while (c < currentBuffer.numberOfChannels) {
+          chan = currentBuffer.getChannelData(c);
+          console.log(chan);
+          chan.data = [];
+          chan.sampleRate = currentBuffer.sampleRate;
+          for (_i = 0, _len = chan.length; _i < _len; _i++) {
+            cn = chan[_i];
+            chan.data.push(cn);
+          }
+          chan.data = chan.data.slice(chan.data.length / 2, chan.data.length);
+          sequenceList.push(chan);
+          c++;
+        }
+        waveTrack.fromAudioSequences(sequenceList);
+        blobURL = waveTrack.toBlobUrl("application/octet-stream");
+        return blobURL;
+      }
     };
     return exports = WebAudio;
   });

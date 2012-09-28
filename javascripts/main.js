@@ -2,10 +2,11 @@
 (function() {
 
   define(function(require) {
-    var WavePanelView;
+    var WavePanelView, wavePanelView;
     WavePanelView = require('./wave-panel-view');
+    wavePanelView = null;
     $('#file').on('change', function() {
-      var file, wavePanelView;
+      var file;
       $('.audio-editor').remove();
       wavePanelView = new WavePanelView({
         width: 1024,
@@ -15,15 +16,12 @@
       $('#wave_container').append(wavePanelView.$el);
       file = $(this).prop('files')[0];
       return wavePanelView.loadFile(file);
-      /*
-          $('#export').click(()->
-            wavesurfer.export()
-          )
-      */
-
     });
-    return $('#choose').on('click', function() {
+    $('#choose').on('click', function() {
       return $('#file').trigger('click');
+    });
+    return $('#export').click(function() {
+      return wavePanelView.exportAudio();
     });
   });
 
