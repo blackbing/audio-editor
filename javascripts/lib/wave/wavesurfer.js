@@ -67,7 +67,7 @@
       "export": function(downloadName) {
         var blobURL, downloadLink;
         if (downloadName == null) {
-          downloadName = 'exprot.wav';
+          downloadName = 'export.wav';
         }
         blobURL = this.webAudio["export"]();
         downloadLink = $('<a download="' + downloadName + '" href="' + blobURL + '"/>');

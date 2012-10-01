@@ -62,7 +62,7 @@ define (require)->
 
 
 
-    export: (downloadName = 'exprot.wav')->
+    export: (downloadName = 'export.wav')->
 
       blobURL = @webAudio.export()
 
