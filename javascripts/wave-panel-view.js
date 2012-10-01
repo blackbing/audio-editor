@@ -57,6 +57,12 @@
       exportAudio: function() {
         return wavesurfer["export"]();
       },
+      playPause: function() {
+        return wavesurfer.playPause();
+      },
+      updatePlaying: function(percentage) {
+        return this.$('.playing-pointer').css('left', "" + (percentage * 100) + "%");
+      },
       initialize: function(options) {
         var _this = this;
         this.$el.append(wavePanel_tpl());
@@ -65,6 +71,9 @@
           width: options.width,
           height: options.height,
           color: options.color
+        });
+        wavesurfer.bind('playing', function(currentPercents) {
+          return _this.updatePlaying.apply(_this, arguments);
         });
         this.audioHandler = this.$('.audio-handler');
         this.canvasWidth = options.width;

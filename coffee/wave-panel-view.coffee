@@ -63,6 +63,13 @@ define (require)->
     exportAudio: ()->
       wavesurfer.export()
 
+    playPause: ()->
+      wavesurfer.playPause()
+
+    updatePlaying: (percentage)->
+      @$('.playing-pointer').css('left', "#{percentage*100}%")
+
+
     initialize: (options)->
       @$el.append(wavePanel_tpl())
 
@@ -75,6 +82,9 @@ define (require)->
         color: options.color
 
 
+      wavesurfer.bind('playing', (currentPercents)=>
+        @updatePlaying.apply(@, arguments)
+      )
 
 
       @audioHandler = @$('.audio-handler')

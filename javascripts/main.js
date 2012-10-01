@@ -20,6 +20,9 @@
     $('#choose').on('click', function() {
       return $('#file').trigger('click');
     });
+    $('#play').click(function() {
+      return wavePanelView.playPause();
+    });
     return $('#export').click(function() {
       return wavePanelView.exportAudio();
     });

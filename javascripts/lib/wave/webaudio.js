@@ -23,8 +23,7 @@
         this.proc.connect(this.destination);
         this.dataArray = new Uint8Array(this.analyser.fftSize);
         this.paused = true;
-        currentBuffer = this.currentBuffer;
-        return console.log(currentBuffer);
+        return currentBuffer = this.currentBuffer;
       },
       setSource: function(source) {
         this.source && this.source.disconnect();
@@ -44,14 +43,22 @@
         return console.log(this.ac);
       },
       preSetBuffer: function(buffer) {
-        var currentBuffer, currentBufferData, _results;
+        var c, chan, cn, currentBuffer, currentBufferData, _i, _len;
         currentBuffer = buffer;
         currentBufferData = [];
-        _results = [];
+        c = 0;
         while (c < currentBuffer.numberOfChannels) {
-          _results.push(console.log(c));
+          chan = currentBuffer.getChannelData(c);
+          chan.data = [];
+          chan.sampleRate = currentBuffer.sampleRate;
+          for (_i = 0, _len = chan.length; _i < _len; _i++) {
+            cn = chan[_i];
+            chan.data.push(cn);
+          }
+          currentBufferData.push(chan);
+          c++;
         }
-        return _results;
+        return this.currentBufferData = currentBufferData;
       },
       getDuration: function() {
         return this.currentBuffer && this.currentBuffer.duration;
@@ -86,29 +93,34 @@
         this.analyser.getByteFrequencyData(this.dataArray);
         return this.dataArray;
       },
-      setSelection: function(from, to) {},
       "export": function() {
-        var blobURL, c, chan, cn, currentBuffer, sequenceList, waveTrack, _i, _len;
+        var blobURL, channel, channelData, currentBufferData, fromIdx, selection, sequenceList, toIdx, waveTrack, _i, _len;
         waveTrack = new WaveTrack();
+        currentBufferData = this.currentBufferData;
         sequenceList = [];
-        currentBuffer = this.currentBuffer;
-        c = 0;
-        while (c < currentBuffer.numberOfChannels) {
-          chan = currentBuffer.getChannelData(c);
-          console.log(chan);
-          chan.data = [];
-          chan.sampleRate = currentBuffer.sampleRate;
-          for (_i = 0, _len = chan.length; _i < _len; _i++) {
-            cn = chan[_i];
-            chan.data.push(cn);
-          }
-          chan.data = chan.data.slice(chan.data.length / 2, chan.data.length);
-          sequenceList.push(chan);
-          c++;
+        selection = this.getSelection();
+        for (_i = 0, _len = currentBufferData.length; _i < _len; _i++) {
+          channel = currentBufferData[_i];
+          fromIdx = channel.data.length * selection.from;
+          toIdx = channel.data.length * selection.to;
+          channelData = {
+            sampleRate: channel.sampleRate,
+            data: channel.data.slice(fromIdx, toIdx)
+          };
+          sequenceList.push(channelData);
         }
         waveTrack.fromAudioSequences(sequenceList);
         blobURL = waveTrack.toBlobUrl("application/octet-stream");
         return blobURL;
+      },
+      setSelection: function(from, to) {
+        return this.selection = {
+          from: from,
+          to: to
+        };
+      },
+      getSelection: function() {
+        return this.selection;
       }
     };
     return exports = WebAudio;

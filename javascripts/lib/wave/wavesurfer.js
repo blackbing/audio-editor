@@ -12,18 +12,29 @@
         this.webAudio.init(params);
         this.drawer = Drawer;
         this.drawer.init(params);
-        return this.webAudio.proc.onaudioprocess = function() {
+        this.webAudio.proc.onaudioprocess = function() {
           return _this.onAudioProcess();
         };
-        /*
-              @drawer.bindClick (percents)=>
-                @playAt percents
-        */
-
+        return this.drawer.bindClick(function(percents) {
+          return _this.playAt(percents);
+        });
+      },
+      events: {},
+      bind: function(type, callback) {
+        if (!(this.events[type] != null)) {
+          this.events[type] = $.Callbacks();
+        }
+        return this.events[type].add(callback);
+      },
+      trigger: function(type, opts) {
+        if (this.events[type] != null) {
+          return this.events[type].fire(opts);
+        }
       },
       onAudioProcess: function() {
         if (!this.webAudio.paused) {
-          return this.updatePercents();
+          this.updatePercents();
+          return this.trigger('playing', this.currentPercents);
         }
       },
       updatePercents: function() {
@@ -48,19 +59,18 @@
         }
       },
       setSelection: function(from, to) {
-        this.selection = {
-          from: from,
-          to: to
-        };
-        return console.log(this.selection);
+        return this.webAudio.setSelection(from, to);
       },
       getSelection: function() {
-        return this.selection;
+        return this.webaudio.getSlection();
       },
-      "export": function() {
+      "export": function(downloadName) {
         var blobURL, downloadLink;
+        if (downloadName == null) {
+          downloadName = 'exprot.wav';
+        }
         blobURL = this.webAudio["export"]();
-        downloadLink = $('<a download="export.wav" href="' + blobURL + '"/>');
+        downloadLink = $('<a download="' + downloadName + '" href="' + blobURL + '"/>');
         return downloadLink[0].click();
       },
       draw: function() {

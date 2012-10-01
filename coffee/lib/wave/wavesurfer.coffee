@@ -11,16 +11,26 @@ define (require)->
       @webAudio.proc.onaudioprocess = =>
         @onAudioProcess()
 
-      ###
       @drawer.bindClick (percents)=>
         @playAt percents
 
-      ###
+    events: {}
+
+    bind: (type, callback)->
+      if not @events[type]?
+        @events[type] = $.Callbacks()
+
+      @events[type].add(callback)
+
+    trigger: (type, opts)->
+      if @events[type]?
+        @events[type].fire(opts)
 
     onAudioProcess: ->
       unless @webAudio.paused
         @updatePercents()
         #@drawer.setCursorPercent @currentPercents
+        @trigger('playing', @currentPercents)
 
     updatePercents: ->
       d = @webAudio.ac.currentTime - @webAudio.lastPlay
@@ -42,24 +52,21 @@ define (require)->
         @pause()
 
     setSelection: (from, to)->
-      ##
-      @selection =
-        from: from
-        to: to
-      console.log @selection
+
+      @webAudio.setSelection(from, to)
 
     getSelection: ()->
       ##
-      @selection
+      @webaudio.getSlection()
 
 
 
 
-    export: ->
+    export: (downloadName = 'exprot.wav')->
 
       blobURL = @webAudio.export()
 
-      downloadLink = $('<a download="export.wav" href="'+blobURL+'"/>')
+      downloadLink = $('<a download="'+downloadName+'" href="'+blobURL+'"/>')
       downloadLink[0].click()
 
     draw: ->

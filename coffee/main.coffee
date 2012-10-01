@@ -23,6 +23,9 @@ define (require)->
   $('#choose').on('click', ()->
     $('#file').trigger('click')
   )
+  $('#play').click(()->
+    wavePanelView.playPause()
+  )
   $('#export').click(()->
     wavePanelView.exportAudio()
   )

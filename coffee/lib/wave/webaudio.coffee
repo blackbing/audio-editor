@@ -22,7 +22,6 @@ define (require)->
       @paused = true
 
       currentBuffer = @currentBuffer
-      console.log currentBuffer
 
     setSource: (source) ->
       @source and @source.disconnect()
@@ -43,11 +42,19 @@ define (require)->
     preSetBuffer: (buffer)->
       currentBuffer = buffer
       currentBufferData = []
+      c = 0
       while c < currentBuffer.numberOfChannels
 
-        #do something
-        console.log c
+        chan = currentBuffer.getChannelData(c)
+        chan.data = []
+        chan.sampleRate = currentBuffer.sampleRate
+        for cn in chan
+          chan.data.push(cn)
+        currentBufferData.push(chan)
+        c++
 
+
+      @currentBufferData = currentBufferData
 
 
 
@@ -81,33 +88,40 @@ define (require)->
       @analyser.getByteFrequencyData @dataArray
       @dataArray
 
-    setSelection: (from, to)->
-
-      ##
 
     export: ->
       waveTrack = new WaveTrack()
+
+      currentBufferData = @currentBufferData
+
       sequenceList = []
-      currentBuffer = @currentBuffer
+      selection = @getSelection()
 
-      c = 0
 
-      while c < currentBuffer.numberOfChannels
-        chan = currentBuffer.getChannelData(c)
-        console.log chan
-        chan.data = []
-        chan.sampleRate = currentBuffer.sampleRate
-        for cn in chan
-          chan.data.push(cn)
-        ##for testing
-        chan.data = chan.data.slice(chan.data.length/2, chan.data.length)
-        sequenceList.push(chan)
-        c++
+      for channel in currentBufferData
+        fromIdx = channel.data.length * selection.from
+        toIdx = channel.data.length * selection.to
+
+
+        channelData =
+          sampleRate: channel.sampleRate
+          data: channel.data.slice(fromIdx, toIdx)
+
+        sequenceList.push channelData
 
 
       waveTrack.fromAudioSequences(sequenceList)
       blobURL = waveTrack.toBlobUrl("application/octet-stream")
       blobURL
 
+    setSelection: (from, to)->
+      ##
+      @selection =
+        from: from
+        to: to
+
+    getSelection: ()->
+      ##
+      @selection
 
   exports = WebAudio
