@@ -24,6 +24,7 @@ define (require)->
       maxsum = 0
       i = 0
 
+      chan_sum = []
       while i < @width
         sum = 0
         c = 0
@@ -33,9 +34,12 @@ define (require)->
           max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k))
           sum += max
           c++
+
+        chan_sum.push(sum)
         maxsum = sum  if sum > maxsum
         i++
       scale = 1 / maxsum
+      ###
       i = 0
       while i < @width
         sum = 0
@@ -49,6 +53,13 @@ define (require)->
         sum *= scale
         @drawFrame sum, i
         i++
+      ###
+
+      for i of chan_sum
+        @drawFrame chan_sum[i], i
+
+      chan_sum = null
+
       @framesPerPx = k
 
     drawFrame: (value, index) ->
