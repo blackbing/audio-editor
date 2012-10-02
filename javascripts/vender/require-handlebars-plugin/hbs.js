@@ -11,11 +11,11 @@
 define: false, process: false, window: false */
 define([
 //>>excludeStart('excludeHbs', pragmas.excludeHbs)
-'handlebars', 'i18nprecompile'
+'handlebars', 'underscore', 'i18nprecompile', 'json2'
 //>>excludeEnd('excludeHbs')
 ], function (
 //>>excludeStart('excludeHbs', pragmas.excludeHbs)
- Handlebars, precompile
+ Handlebars, _, precompile, JSON
 //>>excludeEnd('excludeHbs')
 ) {
 //>>excludeStart('excludeHbs', pragmas.excludeHbs)
@@ -165,7 +165,7 @@ define([
               var statement, res, test;
               if ( nodes && nodes.statements ) {
                 statement = nodes.statements[0];
-                if ( statement.type === "comment" ) {
+                if ( statement && statement.type === "comment" ) {
                   try {
                     res = ( statement.comment ).replace(new RegExp('^[\\s]+|[\\s]+$', 'g'), '');
                     test = JSON.parse(res);

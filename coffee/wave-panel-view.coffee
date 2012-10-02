@@ -23,6 +23,7 @@ define (require)->
 
       )
       $('body').on('mouseup.mouseupOnCanvas', (event)=>
+        @selectionDrop()
         $('body').unbind('mousemove.draggingOnCanvas')
         $('body').unbind('mouseup.mouseupOnCanvas')
       )
@@ -58,7 +59,10 @@ define (require)->
       from = left/@canvasWidth
       to = (left+width)/@canvasWidth
 
-      wavesurfer.setSelection(from, to)
+    selectionDrop: ()->
+      left = parseFloat(@audioHandler.css('left'))
+      from = left/@canvasWidth
+      wavesurfer.playAt(from)
 
     exportAudio: ()->
       wavesurfer.export()
@@ -96,12 +100,16 @@ define (require)->
         axis: "x"
         drag: ()=>
           @selectionChanged.apply(@, arguments)
+        stop: ()=>
+          @selectionDrop.apply(@, arguments)
       )
       .resizable(
         containment: "parent"
         handles: "e, w"
         resize: ()=>
           @selectionChanged.apply(@, arguments)
+        stop: ()=>
+          @selectionDrop.apply(@, arguments)
       )
 
     loadFile: (file)->
