@@ -24,6 +24,7 @@
           return _this.draggingOnCanvas(event);
         });
         return $('body').on('mouseup.mouseupOnCanvas', function(event) {
+          _this.selectionDrop();
           $('body').unbind('mousemove.draggingOnCanvas');
           return $('body').unbind('mouseup.mouseupOnCanvas');
         });
@@ -51,8 +52,13 @@
         left = parseFloat(this.audioHandler.css('left'));
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
-        to = (left + width) / this.canvasWidth;
-        return wavesurfer.setSelection(from, to);
+        return to = (left + width) / this.canvasWidth;
+      },
+      selectionDrop: function() {
+        var from, left;
+        left = parseFloat(this.audioHandler.css('left'));
+        from = left / this.canvasWidth;
+        return wavesurfer.playAt(from);
       },
       exportAudio: function() {
         return wavesurfer["export"]();
@@ -82,12 +88,18 @@
           axis: "x",
           drag: function() {
             return _this.selectionChanged.apply(_this, arguments);
+          },
+          stop: function() {
+            return _this.selectionDrop.apply(_this, arguments);
           }
         }).resizable({
           containment: "parent",
           handles: "e, w",
           resize: function() {
             return _this.selectionChanged.apply(_this, arguments);
+          },
+          stop: function() {
+            return _this.selectionDrop.apply(_this, arguments);
           }
         });
       },
