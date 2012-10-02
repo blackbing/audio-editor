@@ -25,11 +25,12 @@
         }), false);
       },
       drawBuffer: function(buffer) {
-        var c, chan, i, k, max, maxsum, scale, slice, sum;
+        var c, chan, chan_sum, i, k, max, maxsum, scale, slice, sum;
         k = buffer.getChannelData(0).length / this.width;
         slice = Array.prototype.slice;
         maxsum = 0;
         i = 0;
+        chan_sum = [];
         while (i < this.width) {
           sum = 0;
           c = 0;
@@ -39,26 +40,33 @@
             sum += max;
             c++;
           }
+          chan_sum.push(sum);
           if (sum > maxsum) {
             maxsum = sum;
           }
           i++;
         }
         scale = 1 / maxsum;
-        i = 0;
-        while (i < this.width) {
-          sum = 0;
-          c = 0;
-          while (c < buffer.numberOfChannels) {
-            chan = buffer.getChannelData(c);
-            max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k));
-            sum += max;
-            c++;
-          }
-          sum *= scale;
-          this.drawFrame(sum, i);
-          i++;
+        /*
+              i = 0
+              while i < @width
+                sum = 0
+                c = 0
+        
+                while c < buffer.numberOfChannels
+                  chan = buffer.getChannelData(c)
+                  max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k))
+                  sum += max
+                  c++
+                sum *= scale
+                @drawFrame sum, i
+                i++
+        */
+
+        for (i in chan_sum) {
+          this.drawFrame(chan_sum[i], i);
         }
+        chan_sum = null;
         return this.framesPerPx = k;
       },
       drawFrame: function(value, index) {
