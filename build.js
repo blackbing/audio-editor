@@ -1,5 +1,6 @@
 {
   "baseUrl":'javascripts',
+  optimize: "none",
   hbs : {
     templateExtension : 'hbs',
     disableI18n : true

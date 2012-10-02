@@ -1,5 +1,6 @@
-define (require)->
-  WavePanelView = require './wave-panel-view'
+require [
+  './wave-panel-view'
+], (WavePanelView)->
 
   wavePanelView = null
   $('#file').on('change', ()->
@@ -33,3 +34,4 @@ define (require)->
 
 
   #wavesurfer.bindDragNDrop()
+  console.log ('main initial')
