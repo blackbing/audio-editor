@@ -52,7 +52,8 @@
         left = parseFloat(this.audioHandler.css('left'));
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
-        return to = (left + width) / this.canvasWidth;
+        to = (left + width) / this.canvasWidth;
+        return wavesurfer.setSelection(from, to);
       },
       selectionDrop: function() {
         var from, left;

@@ -59,6 +59,8 @@ define (require)->
       from = left/@canvasWidth
       to = (left+width)/@canvasWidth
 
+      wavesurfer.setSelection(from, to)
+
     selectionDrop: ()->
       left = parseFloat(@audioHandler.css('left'))
       from = left/@canvasWidth
