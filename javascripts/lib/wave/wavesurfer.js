@@ -12,12 +12,14 @@
         this.webAudio.init(params);
         this.drawer = Drawer;
         this.drawer.init(params);
-        this.webAudio.proc.onaudioprocess = function() {
+        return this.webAudio.proc.onaudioprocess = function() {
           return _this.onAudioProcess();
         };
-        return this.drawer.bindClick(function(percents) {
-          return _this.playAt(percents);
-        });
+        /*
+              @drawer.bindClick (percents)=>
+                @playAt percents
+        */
+
       },
       events: {},
       bind: function(type, callback) {
@@ -74,7 +76,7 @@
         return downloadLink[0].click();
       },
       draw: function() {
-        return this.drawer.drawBuffer(this.webAudio.currentBuffer);
+        return this.drawer.drawBuffer(this.webAudio.currentBufferData);
       },
       load: function(src) {
         var self, xhr;

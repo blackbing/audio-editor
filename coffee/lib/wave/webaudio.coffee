@@ -46,11 +46,12 @@ define (require)->
       while c < currentBuffer.numberOfChannels
 
         chan = currentBuffer.getChannelData(c)
-        chan.data = []
-        chan.sampleRate = currentBuffer.sampleRate
+        cloneChan =
+          data : []
+          sampleRate : currentBuffer.sampleRate
         for cn in chan
-          chan.data.push(cn)
-        currentBufferData.push(chan)
+          cloneChan.data.push(cn)
+        currentBufferData.push(cloneChan)
         c++
 
 
