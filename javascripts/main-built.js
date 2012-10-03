@@ -523,19 +523,21 @@
         return console.log(this.ac);
       },
       preSetBuffer: function(buffer) {
-        var c, chan, cn, currentBuffer, currentBufferData, _i, _len;
+        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, _i, _len;
         currentBuffer = buffer;
         currentBufferData = [];
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
-          chan.data = [];
-          chan.sampleRate = currentBuffer.sampleRate;
+          cloneChan = {
+            data: [],
+            sampleRate: currentBuffer.sampleRate
+          };
           for (_i = 0, _len = chan.length; _i < _len; _i++) {
             cn = chan[_i];
-            chan.data.push(cn);
+            cloneChan.data.push(cn);
           }
-          currentBufferData.push(chan);
+          currentBufferData.push(cloneChan);
           c++;
         }
         return this.currentBufferData = currentBufferData;
@@ -634,49 +636,52 @@
           return callback(percents);
         }), false);
       },
-      drawBuffer: function(buffer) {
-        var c, chan, chan_sum, i, k, max, maxsum, scale, slice, sum;
-        k = buffer.getChannelData(0).length / this.width;
+      drawBuffer: function(bufferData) {
+        var buffer, chan_sum, data, go, i, k, max, maxsum, scale, slice, sliceData, sum, _i, _j, _len, _ref,
+          _this = this;
+        k = bufferData[0].data.length / this.width;
         slice = Array.prototype.slice;
         maxsum = 0;
         i = 0;
         chan_sum = [];
-        while (i < this.width) {
+        for (i = _i = 0, _ref = this.width - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           sum = 0;
-          c = 0;
-          while (c < buffer.numberOfChannels) {
-            chan = buffer.getChannelData(c);
-            max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k));
+          for (_j = 0, _len = bufferData.length; _j < _len; _j++) {
+            buffer = bufferData[_j];
+            data = buffer.data;
+            sliceData = slice.call(data, i * k, (i + 1) * k);
+            max = Math.max.apply(Math, sliceData);
             sum += max;
-            c++;
           }
           chan_sum.push(sum);
           if (sum > maxsum) {
             maxsum = sum;
           }
-          i++;
         }
         scale = 1 / maxsum;
-        /*
-              i = 0
-              while i < @width
-                sum = 0
-                c = 0
-        
-                while c < buffer.numberOfChannels
-                  chan = buffer.getChannelData(c)
-                  max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k))
-                  sum += max
-                  c++
-                sum *= scale
-                @drawFrame sum, i
-                i++
-        */
-
-        for (i in chan_sum) {
-          this.drawFrame(chan_sum[i], i);
-        }
-        chan_sum = null;
+        go = (function() {
+          var playIdx, playStep;
+          playIdx = 0;
+          playStep = 10;
+          return function() {
+            var stepIndex, sum_i, _k;
+            if (playIdx < chan_sum.length) {
+              stepIndex = playIdx + playStep;
+              if (stepIndex >= chan_sum.length) {
+                stepIndex = chan_sum.length;
+              }
+              for (i = _k = playIdx; playIdx <= stepIndex ? _k <= stepIndex : _k >= stepIndex; i = playIdx <= stepIndex ? ++_k : --_k) {
+                sum_i = chan_sum[i] * scale;
+                _this.drawFrame.call(_this, sum_i, i);
+                playIdx++;
+              }
+              return setTimeout(arguments.callee, 1);
+            } else {
+              return console.log('stop');
+            }
+          };
+        })();
+        go();
         return this.framesPerPx = k;
       },
       drawFrame: function(value, index) {
@@ -721,12 +726,14 @@
         this.webAudio.init(params);
         this.drawer = Drawer;
         this.drawer.init(params);
-        this.webAudio.proc.onaudioprocess = function() {
+        return this.webAudio.proc.onaudioprocess = function() {
           return _this.onAudioProcess();
         };
-        return this.drawer.bindClick(function(percents) {
-          return _this.playAt(percents);
-        });
+        /*
+              @drawer.bindClick (percents)=>
+                @playAt percents
+        */
+
       },
       events: {},
       bind: function(type, callback) {
@@ -783,7 +790,7 @@
         return downloadLink[0].click();
       },
       draw: function() {
-        return this.drawer.drawBuffer(this.webAudio.currentBuffer);
+        return this.drawer.drawBuffer(this.webAudio.currentBufferData);
       },
       load: function(src) {
         var self, xhr;
