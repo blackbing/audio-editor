@@ -45,7 +45,7 @@ define (require)->
       ##make it as animation
       go = do ()=>
         playIdx = 0
-        playStep = 10
+        playStep = 5
         =>
           #check ending length
           if playIdx < chan_sum.length
@@ -56,7 +56,7 @@ define (require)->
               sum_i = chan_sum[i]*scale
               @drawFrame.call(@, sum_i, i)
               playIdx++
-            setTimeout(arguments.callee, 1)
+            setTimeout(arguments.callee, 5)
           else
             console.log 'stop'
 

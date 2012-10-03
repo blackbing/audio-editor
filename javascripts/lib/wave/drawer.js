@@ -50,7 +50,7 @@
         go = (function() {
           var playIdx, playStep;
           playIdx = 0;
-          playStep = 10;
+          playStep = 5;
           return function() {
             var stepIndex, sum_i, _k;
             if (playIdx < chan_sum.length) {
@@ -63,7 +63,7 @@
                 _this.drawFrame.call(_this, sum_i, i);
                 playIdx++;
               }
-              return setTimeout(arguments.callee, 1);
+              return setTimeout(arguments.callee, 5);
             } else {
               return console.log('stop');
             }
