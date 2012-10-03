@@ -18,45 +18,33 @@ define (require)->
         callback percents
       ), false
 
-    drawBuffer: (buffer) ->
-      k = buffer.getChannelData(0).length / @width
-      slice = Array::slice
+    drawBuffer: (bufferData) ->
+      k = bufferData[0].data.length/@width
+      slice = Array.prototype.slice
+
       maxsum = 0
       i = 0
 
       chan_sum = []
-      while i < @width
-        sum = 0
-        c = 0
 
-        while c < buffer.numberOfChannels
-          chan = buffer.getChannelData(c)
-          max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k))
+      for i in [0..@width-1]
+        sum = 0
+        for buffer in bufferData
+          data = buffer.data
+          sliceData = slice.call(data, i*k, (i+1)*k)
+
+          max = Math.max.apply(Math, sliceData)
           sum += max
-          c++
 
         chan_sum.push(sum)
         maxsum = sum  if sum > maxsum
-        i++
-      scale = 1 / maxsum
-      ###
-      i = 0
-      while i < @width
-        sum = 0
-        c = 0
 
-        while c < buffer.numberOfChannels
-          chan = buffer.getChannelData(c)
-          max = Math.max.apply(Math, slice.call(chan, i * k, (i + 1) * k))
-          sum += max
-          c++
-        sum *= scale
-        @drawFrame sum, i
-        i++
-      ###
+      scale = 1/maxsum
+
 
       for i of chan_sum
-        @drawFrame chan_sum[i], i
+        sum_i = chan_sum[i]*scale
+        @drawFrame sum_i, i
 
       chan_sum = null
 

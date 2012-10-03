@@ -11,8 +11,10 @@ define (require)->
       @webAudio.proc.onaudioprocess = =>
         @onAudioProcess()
 
+      ###
       @drawer.bindClick (percents)=>
         @playAt percents
+      ###
 
     events: {}
 
@@ -70,7 +72,7 @@ define (require)->
       downloadLink[0].click()
 
     draw: ->
-      @drawer.drawBuffer @webAudio.currentBuffer
+      @drawer.drawBuffer @webAudio.currentBufferData
 
     load: (src) ->
       self = this

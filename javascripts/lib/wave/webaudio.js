@@ -43,19 +43,21 @@
         return console.log(this.ac);
       },
       preSetBuffer: function(buffer) {
-        var c, chan, cn, currentBuffer, currentBufferData, _i, _len;
+        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, _i, _len;
         currentBuffer = buffer;
         currentBufferData = [];
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
-          chan.data = [];
-          chan.sampleRate = currentBuffer.sampleRate;
+          cloneChan = {
+            data: [],
+            sampleRate: currentBuffer.sampleRate
+          };
           for (_i = 0, _len = chan.length; _i < _len; _i++) {
             cn = chan[_i];
-            chan.data.push(cn);
+            cloneChan.data.push(cn);
           }
-          currentBufferData.push(chan);
+          currentBufferData.push(cloneChan);
           c++;
         }
         return this.currentBufferData = currentBufferData;
