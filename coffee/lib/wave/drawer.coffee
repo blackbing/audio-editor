@@ -42,13 +42,29 @@ define (require)->
       scale = 1/maxsum
 
 
-      for i of chan_sum
-        sum_i = chan_sum[i]*scale
-        @drawFrame sum_i, i
+      ##make it as animation
+      go = do ()=>
+        playIdx = 0
+        playStep = 10
+        =>
+          #check ending length
+          if playIdx < chan_sum.length
+            stepIndex = playIdx+playStep
+            if stepIndex >= chan_sum.length
+              stepIndex = chan_sum.length
+            for i in [playIdx..stepIndex]
+              sum_i = chan_sum[i]*scale
+              @drawFrame.call(@, sum_i, i)
+              playIdx++
+            setTimeout(arguments.callee, 1)
+          else
+            console.log 'stop'
 
-      chan_sum = null
+      go()
 
       @framesPerPx = k
+
+
 
     drawFrame: (value, index) ->
       w = 1

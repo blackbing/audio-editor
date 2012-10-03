@@ -25,7 +25,8 @@
         }), false);
       },
       drawBuffer: function(bufferData) {
-        var buffer, chan_sum, data, i, k, max, maxsum, scale, slice, sliceData, sum, sum_i, _i, _j, _len, _ref;
+        var buffer, chan_sum, data, go, i, k, max, maxsum, scale, slice, sliceData, sum, _i, _j, _len, _ref,
+          _this = this;
         k = bufferData[0].data.length / this.width;
         slice = Array.prototype.slice;
         maxsum = 0;
@@ -46,11 +47,29 @@
           }
         }
         scale = 1 / maxsum;
-        for (i in chan_sum) {
-          sum_i = chan_sum[i] * scale;
-          this.drawFrame(sum_i, i);
-        }
-        chan_sum = null;
+        go = (function() {
+          var playIdx, playStep;
+          playIdx = 0;
+          playStep = 10;
+          return function() {
+            var stepIndex, sum_i, _k;
+            if (playIdx < chan_sum.length) {
+              stepIndex = playIdx + playStep;
+              if (stepIndex >= chan_sum.length) {
+                stepIndex = chan_sum.length;
+              }
+              for (i = _k = playIdx; playIdx <= stepIndex ? _k <= stepIndex : _k >= stepIndex; i = playIdx <= stepIndex ? ++_k : --_k) {
+                sum_i = chan_sum[i] * scale;
+                _this.drawFrame.call(_this, sum_i, i);
+                playIdx++;
+              }
+              return setTimeout(arguments.callee, 1);
+            } else {
+              return console.log('stop');
+            }
+          };
+        })();
+        go();
         return this.framesPerPx = k;
       },
       drawFrame: function(value, index) {
