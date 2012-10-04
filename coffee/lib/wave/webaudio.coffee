@@ -49,8 +49,12 @@ define (require)->
         cloneChan =
           data : []
           sampleRate : currentBuffer.sampleRate
-        for cn in chan
+        #for cn in chan
+        i = 0
+        while(i<chan.length)
+          cn = chan[i]
           cloneChan.data.push(cn)
+          i+=1
         currentBufferData.push(cloneChan)
         c++
 

@@ -127,6 +127,12 @@ This is a simple tool to crop an audio file form your local and generate a downl
       ,}
     };
     </script>
-    <script data-main="main-built" src="http://requirejs.org/docs/release/2.0.6/minified/require.js"></script>
+    <script src="http://requirejs.org/docs/release/2.0.6/minified/require.js"></script>
+    <script src="javascripts/main-built.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+    require({deps: ["main"]});
+    //]]>
+    </script>
   </body>
 </html>
