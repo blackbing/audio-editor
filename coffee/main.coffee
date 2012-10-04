@@ -1,8 +1,7 @@
-require [
-  './wave-panel-view'
-], (WavePanelView)->
-
+define (require)->
+  WavePanelView = require './wave-panel-view'
   wavePanelView = null
+
   $('#file').on('change', ()->
     $('.audio-editor').remove()
     wavePanelView = new WavePanelView(
