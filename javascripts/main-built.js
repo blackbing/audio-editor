@@ -512,15 +512,18 @@
         return this.source.connect(this.proc);
       },
       loadData: function(audioData, cb) {
-        var _this = this;
+        var _dfr,
+          _this = this;
+        _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
           _this.preSetBuffer(_this.currentBuffer);
-          return cb(buffer);
+          cb(buffer);
+          return _dfr.resolve();
         }), Error);
-        return console.log(this.ac);
+        return _dfr;
       },
       preSetBuffer: function(buffer) {
         var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i;
@@ -806,13 +809,19 @@
         return xhr.send();
       },
       loadFile: function(file) {
-        var reader, self;
-        self = this;
+        var reader, _dfr,
+          _this = this;
+        _dfr = $.Deferred();
         reader = new FileReader();
-        reader.addEventListener("load", (function(e) {
-          return self.webAudio.loadData(e.target.result, self.draw.bind(self));
-        }), false);
-        return reader.readAsArrayBuffer(file);
+        reader.addEventListener("load", function(e) {
+          var loadData_dfr;
+          loadData_dfr = _this.webAudio.loadData(e.target.result, _this.draw.bind(_this));
+          return loadData_dfr.done(function() {
+            return _dfr.resolve();
+          });
+        }, false);
+        reader.readAsArrayBuffer(file);
+        return _dfr;
       },
       bindDragNDrop: function(dropTarget) {
         var reader, self;
@@ -4643,7 +4652,7 @@ var t = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   
 
 
-  return "    <div class=\"playing-pointer\"></div>\n    <canvas id=\"wave\"></canvas>\n    <div class=\"audio-handler\">\n      <div class=\"handler-left\"></div>\n      <div class=\"handler-right\"></div>\n    </div>\n";});
+  return "    <div class=\"playing-pointer\"></div>\n    <canvas id=\"wave\"></canvas>\n    <div class=\"audio-handler\">\n      <div class=\"handler-left\"></div>\n      <div class=\"handler-right\"></div>\n    </div>\n    <div class=\"audio-loading\"></div>\n";});
 Handlebars.registerPartial('wave-panel', t);
 return t;
 });
@@ -4756,7 +4765,15 @@ return t;
         });
       },
       loadFile: function(file) {
-        return wavesurfer.loadFile(file);
+        var _dfr,
+          _this = this;
+        this.$el.addClass('loading');
+        console.time('loadFile');
+        _dfr = wavesurfer.loadFile(file);
+        return _dfr.done(function() {
+          console.timeEnd('loadFile');
+          return _this.$el.removeClass('loading');
+        });
       }
     });
   });
