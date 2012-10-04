@@ -90,13 +90,19 @@
         return xhr.send();
       },
       loadFile: function(file) {
-        var reader, self;
-        self = this;
+        var reader, _dfr,
+          _this = this;
+        _dfr = $.Deferred();
         reader = new FileReader();
-        reader.addEventListener("load", (function(e) {
-          return self.webAudio.loadData(e.target.result, self.draw.bind(self));
-        }), false);
-        return reader.readAsArrayBuffer(file);
+        reader.addEventListener("load", function(e) {
+          var loadData_dfr;
+          loadData_dfr = _this.webAudio.loadData(e.target.result, _this.draw.bind(_this));
+          return loadData_dfr.done(function() {
+            return _dfr.resolve();
+          });
+        }, false);
+        reader.readAsArrayBuffer(file);
+        return _dfr;
       },
       bindDragNDrop: function(dropTarget) {
         var reader, self;

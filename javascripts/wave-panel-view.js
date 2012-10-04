@@ -105,7 +105,15 @@
         });
       },
       loadFile: function(file) {
-        return wavesurfer.loadFile(file);
+        var _dfr,
+          _this = this;
+        this.$el.addClass('loading');
+        console.time('loadFile');
+        _dfr = wavesurfer.loadFile(file);
+        return _dfr.done(function() {
+          console.timeEnd('loadFile');
+          return _this.$el.removeClass('loading');
+        });
       }
     });
   });

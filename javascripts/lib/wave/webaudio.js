@@ -32,15 +32,18 @@
         return this.source.connect(this.proc);
       },
       loadData: function(audioData, cb) {
-        var _this = this;
+        var _dfr,
+          _this = this;
+        _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
           _this.preSetBuffer(_this.currentBuffer);
-          return cb(buffer);
+          cb(buffer);
+          return _dfr.resolve();
         }), Error);
-        return console.log(this.ac);
+        return _dfr;
       },
       preSetBuffer: function(buffer) {
         var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i;

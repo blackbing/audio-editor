@@ -38,32 +38,36 @@
     background-color: #CCC;
     cursor: move;
     opacity: 0.6;
-    /*
-    .handler-left{
-      width: 2px;
-      border-left: 1px dashed black;
-      height: 100%;
-      position: absolute;
-      float: left;
-      cursor: ew-resize;
-    }
-    .handler-right{
-      width: 2px;
-      border-right: 1px dashed black;
-      height: 100%;
-      position: absolute;
-      right: 0px;
-      cursor: ew-resize;
-    }
-    */
+    display: block;
+  }
+  .playing-pointer{
+    z-index: 10;
+    left: 0px;
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    background-color: red;
+  }
+  .audio-loading{
+    position:absolute;
+    width:128px;
+    height:15px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-image: url(../images/audio-loading.gif);
+    display: none;
+  }
+  &.loading .audio-handler{
+    display: none;
+  }
+  &.loading .audio-loading{
+    display: block;
   }
 }
 
-.playing-pointer{
-  z-index: 10;
-  left: 0px;
-  width: 1px;
-  height: 100%;
-  position: absolute;
-  background-color: red;
-}
+
+
+

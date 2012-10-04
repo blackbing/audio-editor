@@ -41,32 +41,35 @@
   background-color: #CCC;
   cursor: move;
   opacity: 0.6;
-  /*
-  .handler-left{
-    width: 2px;
-    border-left: 1px dashed black;
-    height: 100%;
-    position: absolute;
-    float: left;
-    cursor: ew-resize;
-  }
-  .handler-right{
-    width: 2px;
-    border-right: 1px dashed black;
-    height: 100%;
-    position: absolute;
-    right: 0px;
-    cursor: ew-resize;
-  }
-  */
+  display: block;
 }
-
-/* line 62, ../sass/audio-editor.scss */
-.playing-pointer {
+/* line 43, ../sass/audio-editor.scss */
+.audio-editor .playing-pointer {
   z-index: 10;
   left: 0px;
   width: 1px;
   height: 100%;
   position: absolute;
   background-color: red;
+}
+/* line 51, ../sass/audio-editor.scss */
+.audio-editor .audio-loading {
+  position: absolute;
+  width: 128px;
+  height: 15px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-image: url(../images/audio-loading.gif);
+  display: none;
+}
+/* line 63, ../sass/audio-editor.scss */
+.audio-editor.loading .audio-handler {
+  display: none;
+}
+/* line 66, ../sass/audio-editor.scss */
+.audio-editor.loading .audio-loading {
+  display: block;
 }
