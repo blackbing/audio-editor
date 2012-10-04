@@ -30,14 +30,17 @@ define (require)->
       @source.connect @proc
 
     loadData: (audioData, cb) ->
+      _dfr = $.Deferred()
       @ac.decodeAudioData audioData, ((buffer) =>
         @currentBuffer = buffer
         @lastPause = 0
         @lastPlay = 0
         @preSetBuffer(@currentBuffer)
         cb buffer
+        _dfr.resolve()
       ), Error
-      console.log @ac
+
+      _dfr
 
     preSetBuffer: (buffer)->
       currentBuffer = buffer

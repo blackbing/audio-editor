@@ -85,13 +85,19 @@ define (require)->
       xhr.send()
 
     loadFile: (file)->
-      self = this
+
+      _dfr = $.Deferred()
+
       reader = new FileReader()
-      reader.addEventListener "load", ((e) ->
-        self.webAudio.loadData e.target.result, self.draw.bind(self)
-      ), false
+      reader.addEventListener( "load", (e) =>
+        loadData_dfr = @webAudio.loadData e.target.result, @draw.bind(@)
+        loadData_dfr.done(=>
+          _dfr.resolve()
+        )
+      , false)
 
       reader.readAsArrayBuffer(file)
+      _dfr
 
 
     bindDragNDrop: (dropTarget) ->

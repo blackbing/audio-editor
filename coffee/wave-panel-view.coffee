@@ -116,7 +116,13 @@ define (require)->
 
     loadFile: (file)->
 
-      wavesurfer.loadFile(file)
+      @$el.addClass('loading')
+      console.time 'loadFile'
+      _dfr = wavesurfer.loadFile(file)
+      _dfr.done( =>
+        console.timeEnd 'loadFile'
+        @$el.removeClass('loading')
+      )
 
 
 
