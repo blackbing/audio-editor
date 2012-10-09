@@ -60,6 +60,10 @@ define (require)->
       to = (left+width)/@canvasWidth
 
       wavesurfer.setSelection(from, to)
+      selectedDuration = wavesurfer.webAudio.getSelectedDuration()
+      if selectedDuration
+        #console.log selectedDuration
+        @$('.handler-ts').text("#{selectedDuration[0]}:#{selectedDuration[1]}")
 
     selectionDrop: ()->
       left = parseFloat(@audioHandler.css('left'))
@@ -113,6 +117,7 @@ define (require)->
         stop: ()=>
           @selectionDrop.apply(@, arguments)
       )
+      @selectionChanged()
 
     loadFile: (file)->
 

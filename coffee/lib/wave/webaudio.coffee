@@ -6,6 +6,7 @@ define (require)->
     Defaults:
       fftSize: 1024
       smoothingTimeConstant: 0.3
+      sampleRate: 44100/2
 
     ac: new (window.AudioContext or window.webkitAudioContext)
     init: (params) ->
@@ -32,6 +33,7 @@ define (require)->
     loadData: (audioData, cb) ->
       _dfr = $.Deferred()
       @ac.decodeAudioData audioData, ((buffer) =>
+        console.log buffer
         @currentBuffer = buffer
         @lastPause = 0
         @lastPlay = 0
@@ -43,8 +45,11 @@ define (require)->
       _dfr
 
     preSetBuffer: (buffer)->
+      console.time('preSetBuffer')
       currentBuffer = buffer
       currentBufferData = []
+      step = currentBuffer.sampleRate/@Defaults.sampleRate
+      console.log step
       c = 0
       while c < currentBuffer.numberOfChannels
 
@@ -57,12 +62,14 @@ define (require)->
         while(i<chan.length)
           cn = chan[i]
           cloneChan.data.push(cn)
-          i+=1
+          i+=step
         currentBufferData.push(cloneChan)
         c++
 
 
       @currentBufferData = currentBufferData
+      console.timeEnd('preSetBuffer')
+
 
 
 
@@ -112,7 +119,7 @@ define (require)->
 
 
         channelData =
-          sampleRate: channel.sampleRate
+          sampleRate: @Defaults.sampleRate
           data: channel.data.slice(fromIdx, toIdx)
 
         sequenceList.push channelData
@@ -131,5 +138,17 @@ define (require)->
     getSelection: ()->
       ##
       @selection
+
+    getSelectedDuration: ()->
+
+
+      duration = @getDuration()
+      selection = @getSelection()
+      return if not duration or not selection
+      selectedDuration = (selection.to - selection.from) * duration
+
+      mm = Math.floor(selectedDuration/60)
+      ss = (selectedDuration - 60*mm).toFixed(2)
+      [mm, ss]
 
   exports = WebAudio

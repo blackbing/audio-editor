@@ -7,7 +7,8 @@
     WebAudio = {
       Defaults: {
         fftSize: 1024,
-        smoothingTimeConstant: 0.3
+        smoothingTimeConstant: 0.3,
+        sampleRate: 44100 / 2
       },
       ac: new (window.AudioContext || window.webkitAudioContext),
       init: function(params) {
@@ -36,6 +37,7 @@
           _this = this;
         _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
+          console.log(buffer);
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
@@ -46,9 +48,12 @@
         return _dfr;
       },
       preSetBuffer: function(buffer) {
-        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i;
+        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i, step;
+        console.time('preSetBuffer');
         currentBuffer = buffer;
         currentBufferData = [];
+        step = currentBuffer.sampleRate / this.Defaults.sampleRate;
+        console.log(step);
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
@@ -60,12 +65,13 @@
           while (i < chan.length) {
             cn = chan[i];
             cloneChan.data.push(cn);
-            i += 1;
+            i += step;
           }
           currentBufferData.push(cloneChan);
           c++;
         }
-        return this.currentBufferData = currentBufferData;
+        this.currentBufferData = currentBufferData;
+        return console.timeEnd('preSetBuffer');
       },
       getDuration: function() {
         return this.currentBuffer && this.currentBuffer.duration;
@@ -111,7 +117,7 @@
           fromIdx = channel.data.length * selection.from;
           toIdx = channel.data.length * selection.to;
           channelData = {
-            sampleRate: channel.sampleRate,
+            sampleRate: this.Defaults.sampleRate,
             data: channel.data.slice(fromIdx, toIdx)
           };
           sequenceList.push(channelData);
@@ -128,6 +134,18 @@
       },
       getSelection: function() {
         return this.selection;
+      },
+      getSelectedDuration: function() {
+        var duration, mm, selectedDuration, selection, ss;
+        duration = this.getDuration();
+        selection = this.getSelection();
+        if (!duration || !selection) {
+          return;
+        }
+        selectedDuration = (selection.to - selection.from) * duration;
+        mm = Math.floor(selectedDuration / 60);
+        ss = (selectedDuration - 60 * mm).toFixed(2);
+        return [mm, ss];
       }
     };
     return exports = WebAudio;
