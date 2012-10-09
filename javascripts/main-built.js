@@ -487,7 +487,8 @@
     WebAudio = {
       Defaults: {
         fftSize: 1024,
-        smoothingTimeConstant: 0.3
+        smoothingTimeConstant: 0.3,
+        sampleRate: 44100 / 2
       },
       ac: new (window.AudioContext || window.webkitAudioContext),
       init: function(params) {
@@ -516,6 +517,7 @@
           _this = this;
         _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
+          console.log(buffer);
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
@@ -526,9 +528,12 @@
         return _dfr;
       },
       preSetBuffer: function(buffer) {
-        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i;
+        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i, step;
+        console.time('preSetBuffer');
         currentBuffer = buffer;
         currentBufferData = [];
+        step = currentBuffer.sampleRate / this.Defaults.sampleRate;
+        console.log(step);
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
@@ -540,12 +545,13 @@
           while (i < chan.length) {
             cn = chan[i];
             cloneChan.data.push(cn);
-            i += 1;
+            i += step;
           }
           currentBufferData.push(cloneChan);
           c++;
         }
-        return this.currentBufferData = currentBufferData;
+        this.currentBufferData = currentBufferData;
+        return console.timeEnd('preSetBuffer');
       },
       getDuration: function() {
         return this.currentBuffer && this.currentBuffer.duration;
@@ -591,7 +597,7 @@
           fromIdx = channel.data.length * selection.from;
           toIdx = channel.data.length * selection.to;
           channelData = {
-            sampleRate: channel.sampleRate,
+            sampleRate: this.Defaults.sampleRate,
             data: channel.data.slice(fromIdx, toIdx)
           };
           sequenceList.push(channelData);
@@ -608,6 +614,18 @@
       },
       getSelection: function() {
         return this.selection;
+      },
+      getSelectedDuration: function() {
+        var duration, mm, selectedDuration, selection, ss;
+        duration = this.getDuration();
+        selection = this.getSelection();
+        if (!duration || !selection) {
+          return;
+        }
+        selectedDuration = (selection.to - selection.from) * duration;
+        mm = Math.floor(selectedDuration / 60);
+        ss = (selectedDuration - 60 * mm).toFixed(2);
+        return [mm, ss];
       }
     };
     return exports = WebAudio;
@@ -4652,7 +4670,7 @@ var t = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   
 
 
-  return "    <div class=\"playing-pointer\"></div>\n    <canvas id=\"wave\"></canvas>\n    <div class=\"audio-handler\">\n      <div class=\"handler-left\"></div>\n      <div class=\"handler-right\"></div>\n    </div>\n    <div class=\"audio-loading\"></div>\n";});
+  return "    <div class=\"playing-pointer\"></div>\n    <canvas id=\"wave\"></canvas>\n    <div class=\"audio-handler\">\n      <div class=\"handler-ts\"></div>\n      <div class=\"handler-left\"></div>\n      <div class=\"handler-right\"></div>\n    </div>\n    <div class=\"audio-loading\"></div>\n";});
 Handlebars.registerPartial('wave-panel', t);
 return t;
 });
@@ -4708,12 +4726,16 @@ return t;
         return this.selectionChanged();
       },
       selectionChanged: function() {
-        var from, left, to, width;
+        var from, left, selectedDuration, to, width;
         left = parseFloat(this.audioHandler.css('left'));
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
         to = (left + width) / this.canvasWidth;
-        return wavesurfer.setSelection(from, to);
+        wavesurfer.setSelection(from, to);
+        selectedDuration = wavesurfer.webAudio.getSelectedDuration();
+        if (selectedDuration) {
+          return this.$('.handler-ts').text("" + selectedDuration[0] + ":" + selectedDuration[1]);
+        }
       },
       selectionDrop: function() {
         var from, left;
@@ -4744,7 +4766,7 @@ return t;
         });
         this.audioHandler = this.$('.audio-handler');
         this.canvasWidth = options.width;
-        return this.audioHandler.draggable({
+        this.audioHandler.draggable({
           containment: 'parent',
           axis: "x",
           drag: function() {
@@ -4763,6 +4785,7 @@ return t;
             return _this.selectionDrop.apply(_this, arguments);
           }
         });
+        return this.selectionChanged();
       },
       loadFile: function(file) {
         var _dfr,
