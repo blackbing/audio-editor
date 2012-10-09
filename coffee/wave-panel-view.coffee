@@ -59,6 +59,8 @@ define (require)->
       from = left/@canvasWidth
       to = (left+width)/@canvasWidth
 
+      selectedDuration = wavesurfer.webAudio.getSelectedDuration()
+      console.log selectedDuration
       wavesurfer.setSelection(from, to)
 
     selectionDrop: ()->
@@ -113,6 +115,7 @@ define (require)->
         stop: ()=>
           @selectionDrop.apply(@, arguments)
       )
+      @selectionChanged()
 
     loadFile: (file)->
 

@@ -48,11 +48,13 @@
         return this.selectionChanged();
       },
       selectionChanged: function() {
-        var from, left, to, width;
+        var from, left, selectedDuration, to, width;
         left = parseFloat(this.audioHandler.css('left'));
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
         to = (left + width) / this.canvasWidth;
+        selectedDuration = wavesurfer.webAudio.getSelectedDuration();
+        console.log(selectedDuration);
         return wavesurfer.setSelection(from, to);
       },
       selectionDrop: function() {
@@ -84,7 +86,7 @@
         });
         this.audioHandler = this.$('.audio-handler');
         this.canvasWidth = options.width;
-        return this.audioHandler.draggable({
+        this.audioHandler.draggable({
           containment: 'parent',
           axis: "x",
           drag: function() {
@@ -103,6 +105,7 @@
             return _this.selectionDrop.apply(_this, arguments);
           }
         });
+        return this.selectionChanged();
       },
       loadFile: function(file) {
         var _dfr,

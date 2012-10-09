@@ -33,6 +33,7 @@ define (require)->
     loadData: (audioData, cb) ->
       _dfr = $.Deferred()
       @ac.decodeAudioData audioData, ((buffer) =>
+        console.log buffer
         @currentBuffer = buffer
         @lastPause = 0
         @lastPlay = 0
@@ -137,5 +138,17 @@ define (require)->
     getSelection: ()->
       ##
       @selection
+
+    getSelectedDuration: ()->
+
+
+      duration = @getDuration()
+      selection = @getSelection()
+      return if not duration or not selection
+      selectedDuration = (selection.to - selection.from) * duration
+
+      mm = Math.floor(selectedDuration/60)
+      ss = selectedDuration - 60*mm
+      [mm, ss]
 
   exports = WebAudio

@@ -37,6 +37,7 @@
           _this = this;
         _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
+          console.log(buffer);
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
@@ -133,6 +134,18 @@
       },
       getSelection: function() {
         return this.selection;
+      },
+      getSelectedDuration: function() {
+        var duration, mm, selectedDuration, selection, ss;
+        duration = this.getDuration();
+        selection = this.getSelection();
+        if (!duration || !selection) {
+          return;
+        }
+        selectedDuration = (selection.to - selection.from) * duration;
+        mm = Math.floor(selectedDuration / 60);
+        ss = selectedDuration - 60 * mm;
+        return [mm, ss];
       }
     };
     return exports = WebAudio;
