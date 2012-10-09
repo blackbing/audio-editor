@@ -7,7 +7,8 @@
     WebAudio = {
       Defaults: {
         fftSize: 1024,
-        smoothingTimeConstant: 0.3
+        smoothingTimeConstant: 0.3,
+        sampleRate: 44100 / 2
       },
       ac: new (window.AudioContext || window.webkitAudioContext),
       init: function(params) {
@@ -46,9 +47,12 @@
         return _dfr;
       },
       preSetBuffer: function(buffer) {
-        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i;
+        var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i, step;
+        console.time('preSetBuffer');
         currentBuffer = buffer;
         currentBufferData = [];
+        step = currentBuffer.sampleRate / this.Defaults.sampleRate;
+        console.log(step);
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
@@ -60,12 +64,13 @@
           while (i < chan.length) {
             cn = chan[i];
             cloneChan.data.push(cn);
-            i += 1;
+            i += step;
           }
           currentBufferData.push(cloneChan);
           c++;
         }
-        return this.currentBufferData = currentBufferData;
+        this.currentBufferData = currentBufferData;
+        return console.timeEnd('preSetBuffer');
       },
       getDuration: function() {
         return this.currentBuffer && this.currentBuffer.duration;
@@ -111,7 +116,7 @@
           fromIdx = channel.data.length * selection.from;
           toIdx = channel.data.length * selection.to;
           channelData = {
-            sampleRate: channel.sampleRate,
+            sampleRate: this.Defaults.sampleRate,
             data: channel.data.slice(fromIdx, toIdx)
           };
           sequenceList.push(channelData);
