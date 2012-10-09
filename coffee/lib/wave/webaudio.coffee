@@ -148,7 +148,7 @@ define (require)->
       selectedDuration = (selection.to - selection.from) * duration
 
       mm = Math.floor(selectedDuration/60)
-      ss = selectedDuration - 60*mm
+      ss = (selectedDuration - 60*mm).toFixed(2)
       [mm, ss]
 
   exports = WebAudio

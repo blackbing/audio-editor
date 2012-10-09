@@ -44,6 +44,14 @@
   display: block;
 }
 /* line 43, ../sass/audio-editor.scss */
+.audio-editor .audio-handler .handler-ts {
+  float: right;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin: 10px;
+}
+/* line 51, ../sass/audio-editor.scss */
 .audio-editor .playing-pointer {
   z-index: 10;
   left: 0px;
@@ -52,7 +60,7 @@
   position: absolute;
   background-color: red;
 }
-/* line 51, ../sass/audio-editor.scss */
+/* line 59, ../sass/audio-editor.scss */
 .audio-editor .audio-loading {
   position: absolute;
   width: 128px;
@@ -65,11 +73,11 @@
   background-image: url(../images/audio-loading.gif);
   display: none;
 }
-/* line 63, ../sass/audio-editor.scss */
+/* line 72, ../sass/audio-editor.scss */
 .audio-editor.loading .audio-handler {
   display: none;
 }
-/* line 66, ../sass/audio-editor.scss */
+/* line 75, ../sass/audio-editor.scss */
 .audio-editor.loading .audio-loading {
   display: block;
 }

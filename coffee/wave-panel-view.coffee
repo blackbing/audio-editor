@@ -59,9 +59,11 @@ define (require)->
       from = left/@canvasWidth
       to = (left+width)/@canvasWidth
 
-      selectedDuration = wavesurfer.webAudio.getSelectedDuration()
-      console.log selectedDuration
       wavesurfer.setSelection(from, to)
+      selectedDuration = wavesurfer.webAudio.getSelectedDuration()
+      if selectedDuration
+        #console.log selectedDuration
+        @$('.handler-ts').text("#{selectedDuration[0]}:#{selectedDuration[1]}")
 
     selectionDrop: ()->
       left = parseFloat(@audioHandler.css('left'))

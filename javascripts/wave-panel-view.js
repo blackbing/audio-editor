@@ -53,9 +53,11 @@
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
         to = (left + width) / this.canvasWidth;
+        wavesurfer.setSelection(from, to);
         selectedDuration = wavesurfer.webAudio.getSelectedDuration();
-        console.log(selectedDuration);
-        return wavesurfer.setSelection(from, to);
+        if (selectedDuration) {
+          return this.$('.handler-ts').text("" + selectedDuration[0] + ":" + selectedDuration[1]);
+        }
       },
       selectionDrop: function() {
         var from, left;
