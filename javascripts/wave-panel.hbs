@@ -1,8 +1,29 @@
-    <div class="playing-pointer"></div>
-    <canvas id="wave"></canvas>
-    <div class="audio-handler">
-      <div class="handler-ts"></div>
-      <div class="handler-left"></div>
-      <div class="handler-right"></div>
+<div class="audio-editor-panel">
+  <div class="audio-editor">
+      <div class="playing-pointer"></div>
+      <canvas id="wave"></canvas>
+      <div class="audio-handler">
+        <div class="handler-ts"></div>
+        <div id="handler_left" class="ui-resizable-handle ui-resizable-w">
+          <span class="ts"></span>
+        </div>
+        <div id="handler_right" class="ui-resizable-handle ui-resizable-e">
+          <span class="ts"></span>
+        </div>
+      </div>
+      <div class="audio-loading"></div>
+  </div>
+  <div class="audio-progress">
+    <div class="bar" style="width: 0%;">
+      <div class="handle-bar"></div>
     </div>
-    <div class="audio-loading"></div>
+  </div>
+  <div class="audio-control">
+    <span class="playpause play"></span>
+    <span class="current-time">00:00/00:00</span>
+  </div>
+</div>
+<div class="audio-field">
+  <span class="attr">Audio Name: </span>
+  <input id="audio-name" type="text" placeholder="" value="">
+</div>

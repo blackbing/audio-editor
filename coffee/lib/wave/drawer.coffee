@@ -57,8 +57,6 @@ define (require)->
               @drawFrame.call(@, sum_i, i)
               playIdx++
             setTimeout(arguments.callee, 5)
-          else
-            console.log 'stop'
 
       go()
 

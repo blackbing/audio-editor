@@ -2,32 +2,45 @@ define (require)->
   WavePanelView = require './wave-panel-view'
   wavePanelView = null
 
+
+
+  clearAudioView = ->
+    if wavePanelView
+      wavePanelView.remove()
+      wavePanelView = null
+
+
   $('#file').on('change', ()->
-    $('.audio-editor').remove()
+    clearAudioView()
+    file = $(@).prop('files')[0]
     wavePanelView = new WavePanelView(
-      width: 1024
-      height: 256
+      width: 990
+      height: 156
       color: '#99CC00'
     )
-
-    $('#wave_container').append(wavePanelView.$el)
-
-    file = $(@).prop('files')[0]
     wavePanelView.loadFile(file)
 
-
-    #$('.audio-editor').append(editorPanelView.$el)
+    $('#wave_container').append(wavePanelView.$el)
 
   )
 
   $('#choose').on('click', ()->
     $('#file').trigger('click')
   )
+  ###
   $('#play').click(()->
     wavePanelView.playPause()
   )
+  ###
   $('#export').click(()->
-    wavePanelView.exportAudio()
+    wavePanelView.exportAudio().done((exportObj)=>
+      console.log 'exportObj:', exportObj
+      #clearAudioView()
+      blobURL = exportObj.blobURL
+      downloadName = exportObj.filename
+      downloadLink = $('<a download="'+downloadName+'" href="'+blobURL+'"/>')
+      downloadLink[0].click()
+    )
   )
 
 

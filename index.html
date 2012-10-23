@@ -41,7 +41,7 @@
       <section class="inner">
         <h1>Pick up a mp3</h1>
         <div id="wave_container"></div>
-        <div>
+        <div class="wave_buttons">
           <input type="file" id="file" style="display:none">
           <button id="choose" class="btn btn-primary">choose Mp3</button>
           <span class="btn-group control-tool">
@@ -120,6 +120,7 @@ This is a simple tool to crop an audio file form your local and generate a downl
       },
       paths  : {
         'hbs' : 'vender/require-handlebars-plugin/hbs',
+        'text' : 'vender/text',
         'handlebars' : 'vender/require-handlebars-plugin/Handlebars',
         "underscore" : "vender/require-handlebars-plugin/hbs/underscore",
         "i18nprecompile" : "vender/require-handlebars-plugin/hbs/i18nprecompile",

@@ -2,29 +2,46 @@
 (function() {
 
   define(function(require) {
-    var WavePanelView, wavePanelView;
+    var WavePanelView, clearAudioView, wavePanelView;
     WavePanelView = require('./wave-panel-view');
     wavePanelView = null;
+    clearAudioView = function() {
+      if (wavePanelView) {
+        wavePanelView.remove();
+        return wavePanelView = null;
+      }
+    };
     $('#file').on('change', function() {
       var file;
-      $('.audio-editor').remove();
+      clearAudioView();
+      file = $(this).prop('files')[0];
       wavePanelView = new WavePanelView({
-        width: 1024,
-        height: 256,
+        width: 990,
+        height: 156,
         color: '#99CC00'
       });
-      $('#wave_container').append(wavePanelView.$el);
-      file = $(this).prop('files')[0];
-      return wavePanelView.loadFile(file);
+      wavePanelView.loadFile(file);
+      return $('#wave_container').append(wavePanelView.$el);
     });
     $('#choose').on('click', function() {
       return $('#file').trigger('click');
     });
-    $('#play').click(function() {
-      return wavePanelView.playPause();
-    });
+    /*
+      $('#play').click(()->
+        wavePanelView.playPause()
+      )
+    */
+
     $('#export').click(function() {
-      return wavePanelView.exportAudio();
+      var _this = this;
+      return wavePanelView.exportAudio().done(function(exportObj) {
+        var blobURL, downloadLink, downloadName;
+        console.log('exportObj:', exportObj);
+        blobURL = exportObj.blobURL;
+        downloadName = exportObj.filename;
+        downloadLink = $('<a download="' + downloadName + '" href="' + blobURL + '"/>');
+        return downloadLink[0].click();
+      });
     });
     return console.log('main initial');
   });

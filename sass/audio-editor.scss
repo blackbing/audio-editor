@@ -1,16 +1,32 @@
 @import 'compass/utilities';
 @import 'compass/css3';
 
+/*Varibles*/
+$triangleBorder: 10px;
+
+
+@mixin triangle($border, $color){
+    width: 0;
+    height: 0;
+    border-left: $border solid transparent;
+    border-right: $border solid transparent;
+    border-top: $border solid $color;
+}
+
 #wave_container{
-  width: 1024px;
-  height: 256px;
-  margin-bottom: 10px;
+  height: 215px;
+  @include single-box-shadow;
+}
+.wave_buttons{
+  margin-top: 60px;
+}
+.audio-editor-panel{
   @include single-box-shadow;
 }
 .audio-editor{
-  width: 1024px;
-  height: 256px;
-  position: absolute;
+  height: 156px;
+  position: relative;
+  margin: 30px 0px 0px 0px;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -22,16 +38,16 @@
   user-select: none;
 
   canvas{
-    width: 1024px;
-    height: 256px;
     position: absolute;
+    width: 990px;
+    height: 156px;
     cursor: crosshair;
   }
 
   .audio-handler{
     border: 1px dashed black;
-    width: 500px;
-    height: 253px;
+    width: 200px;
+    height: 100%;
     position: absolute;
     left: 100px;
     top: 0px;
@@ -41,11 +57,28 @@
     display: block;
 
     .handler-ts{
+      font-size: 22px;
       float:right;
       position:absolute;
       right: 0px;
-      top: 0px;
+      bottom: 0px;
+      height: 25px;
       margin: 10px;
+    }
+    #handler_right{
+      @include triangle($triangleBorder, #000);
+      margin-right: -$triangleBorder;
+      right: 0px;
+      position: absolute;
+      cursor: pointer;
+      top:-$triangleBorder;
+    }
+    #handler_left{
+      @include triangle($triangleBorder, #000);
+      margin-left: -$triangleBorder + 4px;
+      position: absolute;
+      cursor: pointer;
+      top:-$triangleBorder;
     }
   }
   .playing-pointer{
@@ -65,11 +98,12 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-image: url(../images/audio-loading.gif);
+    background-image: url('../images/audio-loading.gif');
     display: none;
   }
 
-  &.loading .audio-handler{
+  &.loading .audio-handler,
+  &.loading .audio-progress{
     display: none;
   }
   &.loading .audio-loading{
@@ -77,6 +111,107 @@
   }
 }
 
+.audio-progress{
+  height: 10px;
+  background-color: #2E2E2E;
+  background-image: -moz-linear-gradient(top, #868686, #0E0E0E);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#868686), to(#0E0E0E));
+  background-image: -webkit-linear-gradient(top, #868686, #0E0E0E);
+  background-image: -o-linear-gradient(top, #868686, #0E0E0E);
+  background-image: linear-gradient(to bottom, #868686, #0E0E0E);
+  background-repeat: repeat-x;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.audio-progress .bar{
+  float: left;
+  width: 0;
+  height: 100%;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #C00000;
+  background-image: -moz-linear-gradient(top, #E61F1F, #790000);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#E61F1F), to(#790000));
+  background-image: -webkit-linear-gradient(top, #E61F1F, #790000);
+  background-image: -o-linear-gradient(top, #E61F1F, #790000);
+  background-image: linear-gradient(to bottom, #E61F1F, #790000);
+  background-repeat: repeat-x;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.audio-progress .bar .handle-bar{
+  z-index:11;
+  width: 8px;
+  height: 14px;
+  position: relative;
+  left:4px;
+  margin-top: -2px;
+  float: right;
+  background-color: black;
+  cursor: pointer;
+  @include single-box-shadow;
+}
+
+.audio-editor-tool{
+  margin: 15px 0px 0px 0px;
+}
 
 
+.audio-editor .ts{
+  color: black;
+  font-size: 12px;
+  position: absolute;
+  margin-left: -22px;
+  margin-top: -28px;
+  width: 40px;
+  height: 18px;
+  text-align: center;
+  vertical-align: middle;
+}
 
+.audio-control{
+  background-color: #000;
+  height: 50px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.audio-control .playpause{
+  position: absolute;
+  float: none;
+  margin: 0;
+  width: 50px;
+  height: 50px;
+  cursor:pointer;
+  &.play{
+    background-image: url('../images/audio-editor-play.png');
+  }
+  &.pause{
+    background-image: url('../images/audio-editor-pause.png');
+  }
+
+}
+.audio-control .current-time{
+  position: absolute;
+  color: #FFF;
+  float: left;
+  font-size: 14px;
+  margin-top: 0px;
+  line-height: 50px;
+  margin-left: 50px;
+  width: 100px;
+}
+
+
+.audio-field{
+  margin: 20px 0 5px 0px;
+  height: 20px;
+
+  .attr{
+    line-height: 20px;
+    margin-right: 10px;
+  }
+}

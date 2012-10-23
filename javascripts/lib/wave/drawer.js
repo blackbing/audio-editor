@@ -64,8 +64,6 @@
                 playIdx++;
               }
               return setTimeout(arguments.callee, 5);
-            } else {
-              return console.log('stop');
             }
           };
         })();
