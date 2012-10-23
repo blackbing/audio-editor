@@ -7,6 +7,7 @@
   },
   paths  : {
     'hbs' : 'vender/require-handlebars-plugin/hbs',
+    'text' : 'vender/text',
     'handlebars' : 'vender/require-handlebars-plugin/Handlebars',
     "underscore" : "vender/require-handlebars-plugin/hbs/underscore",
     "i18nprecompile" : "vender/require-handlebars-plugin/hbs/i18nprecompile",
