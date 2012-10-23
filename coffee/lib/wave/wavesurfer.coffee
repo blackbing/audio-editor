@@ -4,8 +4,7 @@ define (require)->
 
   WaveSurfer =
     init: (params) ->
-      @webAudio = WebAudio
-      @webAudio.init params
+      @webAudio = new WebAudio(params)
       @drawer = Drawer
       @drawer.init params
       @webAudio.proc.onaudioprocess = =>
@@ -32,7 +31,8 @@ define (require)->
       unless @webAudio.paused
         @updatePercents()
         #@drawer.setCursorPercent @currentPercents
-        @trigger('playing', @currentPercents)
+        if @currentPercents < 1
+          @trigger('playing', @currentPercents)
 
     updatePercents: ->
       d = @webAudio.ac.currentTime - @webAudio.lastPlay
@@ -63,13 +63,18 @@ define (require)->
 
 
 
+    getFileName: ()->
+      @_fileName
 
-    export: (downloadName = 'export.wav')->
 
-      blobURL = @webAudio.export()
+    export: ()->
 
-      downloadLink = $('<a download="'+downloadName+'" href="'+blobURL+'"/>')
-      downloadLink[0].click()
+      @webAudio.export()
+      #blobURL = exportObj.blobURL
+      #dataURL = exportObj.dataURL
+
+      #downloadLink = $('<a download="'+downloadName+'" href="'+blobURL+'"/>')
+      #downloadLink[0].click()
 
     draw: ->
       @drawer.drawBuffer @webAudio.currentBufferData
@@ -85,6 +90,7 @@ define (require)->
       xhr.send()
 
     loadFile: (file)->
+      @_fileName = file.name
 
       _dfr = $.Deferred()
 
@@ -111,5 +117,12 @@ define (require)->
         file = e.dataTransfer.files[0]
         file and reader.readAsArrayBuffer(file)
       ), false
+
+    destroy: ->
+      delete @drawer
+      @webAudio.destroy()
+      delete @webAudio
+      console.log 'destroy'
+
 
   exports = WaveSurfer

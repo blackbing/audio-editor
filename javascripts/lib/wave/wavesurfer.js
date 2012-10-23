@@ -8,8 +8,7 @@
     WaveSurfer = {
       init: function(params) {
         var _this = this;
-        this.webAudio = WebAudio;
-        this.webAudio.init(params);
+        this.webAudio = new WebAudio(params);
         this.drawer = Drawer;
         this.drawer.init(params);
         return this.webAudio.proc.onaudioprocess = function() {
@@ -36,7 +35,9 @@
       onAudioProcess: function() {
         if (!this.webAudio.paused) {
           this.updatePercents();
-          return this.trigger('playing', this.currentPercents);
+          if (this.currentPercents < 1) {
+            return this.trigger('playing', this.currentPercents);
+          }
         }
       },
       updatePercents: function() {
@@ -66,14 +67,11 @@
       getSelection: function() {
         return this.webaudio.getSlection();
       },
-      "export": function(downloadName) {
-        var blobURL, downloadLink;
-        if (downloadName == null) {
-          downloadName = 'export.wav';
-        }
-        blobURL = this.webAudio["export"]();
-        downloadLink = $('<a download="' + downloadName + '" href="' + blobURL + '"/>');
-        return downloadLink[0].click();
+      getFileName: function() {
+        return this._fileName;
+      },
+      "export": function() {
+        return this.webAudio["export"]();
       },
       draw: function() {
         return this.drawer.drawBuffer(this.webAudio.currentBufferData);
@@ -92,6 +90,7 @@
       loadFile: function(file) {
         var reader, _dfr,
           _this = this;
+        this._fileName = file.name;
         _dfr = $.Deferred();
         reader = new FileReader();
         reader.addEventListener("load", function(e) {
@@ -117,6 +116,12 @@
           file = e.dataTransfer.files[0];
           return file && reader.readAsArrayBuffer(file);
         }), false);
+      },
+      destroy: function() {
+        delete this.drawer;
+        this.webAudio.destroy();
+        delete this.webAudio;
+        return console.log('destroy');
       }
     };
     return exports = WaveSurfer;

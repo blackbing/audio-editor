@@ -1,5 +1,7 @@
 define (require)->
 
+  log = require 'lib/htc-log'
+
   BinaryWriter = require('../binary-writer')
   BinaryReader = require('../binary-reader')
 
@@ -28,14 +30,26 @@ define (require)->
       @audioSequences = sequences
       null
 
-    toBlobUrl: (encoding)->
+    toBlobURL: (mimeType)->
       encodedWave = @encodeWaveFile()
+      ###
       bb = new BlobBuilder()
       blob = undefined
       bb.append encodedWave.buffer
-      blob = bb.getBlob(encoding)
+      blob = bb.getBlob(mimeType)
+      ###
+      blob = new Blob([encodedWave.buffer], {
+        type: mimeType
+      })
 
       URL.createObjectURL blob
+
+    toDataURL: ()->
+      #encodedWave = @encodeWaveFile()
+
+      #cryptoHelpers.base64.encode(encodedWave)
+      return ''
+
 
     decodeWaveFile: (data)->
       reader = new BinaryReader(data)
@@ -101,7 +115,6 @@ define (require)->
       waveChunkSize = waveSubchunk2Size + 36
       totalSize = waveChunkSize + 8
       writer = new BinaryWriter(totalSize)
-      console.log writer
       writer.writeString waveChunkID
       writer.writeUInt32 waveChunkSize
       writer.writeString waveFormat

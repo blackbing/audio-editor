@@ -1,15 +1,18 @@
 define (require)->
 
-  WaveTrack = require './wavetrack'
+  wavetrack_worker_js = require 'text!./wavetrack_worker.js'
 
-  WebAudio =
+  #WaveTrack = require './wavetrack'
+  URL = window.URL or window.webkitURL
+
+  class WebAudio
     Defaults:
       fftSize: 1024
       smoothingTimeConstant: 0.3
       sampleRate: 44100/2
 
     ac: new (window.AudioContext or window.webkitAudioContext)
-    init: (params) ->
+    constructor: (params) ->
       params = params or {}
       @fftSize = params.fftSize or @Defaults.fftSize
       @destination = params.destination or @ac.destination
@@ -33,7 +36,6 @@ define (require)->
     loadData: (audioData, cb) ->
       _dfr = $.Deferred()
       @ac.decodeAudioData audioData, ((buffer) =>
-        console.log buffer
         @currentBuffer = buffer
         @lastPause = 0
         @lastPlay = 0
@@ -49,14 +51,13 @@ define (require)->
       currentBuffer = buffer
       currentBufferData = []
       step = currentBuffer.sampleRate/@Defaults.sampleRate
-      console.log step
       c = 0
       while c < currentBuffer.numberOfChannels
 
         chan = currentBuffer.getChannelData(c)
         cloneChan =
           data : []
-          sampleRate : currentBuffer.sampleRate
+          sampleRate : @Defaults.sampleRate
         #for cn in chan
         i = 0
         while(i<chan.length)
@@ -105,6 +106,8 @@ define (require)->
 
 
     export: ->
+
+      ###
       waveTrack = new WaveTrack()
 
       currentBufferData = @currentBufferData
@@ -126,8 +129,50 @@ define (require)->
 
 
       waveTrack.fromAudioSequences(sequenceList)
-      blobURL = waveTrack.toBlobUrl("application/octet-stream")
-      blobURL
+      blobURL = waveTrack.toBlobURL("audio/x-wav")
+      dataURL = waveTrack.toDataURL()
+
+      {
+        dataURL: dataURL
+        blobURL: blobURL
+      }
+      ###########
+
+      _dfr = $.Deferred()
+      currentBufferData = @currentBufferData
+
+      selection = @getSelection()
+      for channel in currentBufferData
+        fromIdx = channel.data.length * selection.from
+        toIdx = channel.data.length * selection.to
+
+        channel.fromIdx = fromIdx
+        channel.toIdx = toIdx
+
+
+      console.time('wavetrack_worker')
+      #worker = new Worker('assets/lib/audio-editor/lib/wave/wavetrack_worker.js')
+      blobWorker = new Blob([wavetrack_worker_js])
+      blobWorker_url = URL.createObjectURL(blobWorker)
+      wavetrack_worker = new Worker(blobWorker_url)
+      wavetrack_worker.onmessage = (event)->
+        encodedWave = event.data
+        blob = new Blob([encodedWave.buffer], {
+          type: "audio/wav"
+        })
+
+        blobURL = webkitURL.createObjectURL blob
+        #dataURL = cryptoHelpers.base64.encode(encodedWave)
+        console.timeEnd('wavetrack_worker')
+        _dfr.resolve({
+          #dataURL: dataURL
+          blobURL: blobURL
+        })
+
+      for channel in currentBufferData
+        wavetrack_worker.postMessage(channel)
+
+      _dfr
 
     setSelection: (from, to)->
       ##
@@ -139,6 +184,14 @@ define (require)->
       ##
       @selection
 
+
+    timeStamp2text: (ts)->
+      mm = Math.floor(ts/60)
+      #mm = _.string.pad(mm, 2, '0')
+      ss = (ts - 60*mm).toFixed(0)
+      #ss = _.string.pad(ss, 2, '0')
+      [mm, ss].join(':')
+
     getSelectedDuration: ()->
 
 
@@ -147,8 +200,22 @@ define (require)->
       return if not duration or not selection
       selectedDuration = (selection.to - selection.from) * duration
 
+      ###
       mm = Math.floor(selectedDuration/60)
       ss = (selectedDuration - 60*mm).toFixed(2)
       [mm, ss]
+      ###
+      @timeStamp2text(selectedDuration)
+
+
+    destroy: ->
+      @proc.disconnect(0)
+      @pause()
+      delete @source if @source?
+      delete @analyser if @analyser?
+      @proc.onaudioprocess = null
+      delete @proc if @proc?
+      delete @ac if @ac?
+
 
   exports = WebAudio

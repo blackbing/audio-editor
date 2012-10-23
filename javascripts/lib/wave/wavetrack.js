@@ -2,7 +2,8 @@
 (function() {
 
   define(function(require) {
-    var BinaryReader, BinaryWriter, BlobBuilder, Complex, FFTComplex, URL, WaveTrack, printComplexArray;
+    var BinaryReader, BinaryWriter, BlobBuilder, Complex, FFTComplex, URL, WaveTrack, log, printComplexArray;
+    log = require('lib/htc-log');
     BinaryWriter = require('../binary-writer');
     BinaryReader = require('../binary-reader');
     BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder;
@@ -61,14 +62,24 @@
         return null;
       };
 
-      WaveTrack.prototype.toBlobUrl = function(encoding) {
-        var bb, blob, encodedWave;
+      WaveTrack.prototype.toBlobURL = function(mimeType) {
+        var blob, encodedWave;
         encodedWave = this.encodeWaveFile();
-        bb = new BlobBuilder();
-        blob = void 0;
-        bb.append(encodedWave.buffer);
-        blob = bb.getBlob(encoding);
+        /*
+              bb = new BlobBuilder()
+              blob = undefined
+              bb.append encodedWave.buffer
+              blob = bb.getBlob(mimeType)
+        */
+
+        blob = new Blob([encodedWave.buffer], {
+          type: mimeType
+        });
         return URL.createObjectURL(blob);
+      };
+
+      WaveTrack.prototype.toDataURL = function() {
+        return '';
       };
 
       WaveTrack.prototype.decodeWaveFile = function(data) {
@@ -140,7 +151,6 @@
         waveChunkSize = waveSubchunk2Size + 36;
         totalSize = waveChunkSize + 8;
         writer = new BinaryWriter(totalSize);
-        console.log(writer);
         writer.writeString(waveChunkID);
         writer.writeUInt32(waveChunkSize);
         writer.writeString(waveFormat);

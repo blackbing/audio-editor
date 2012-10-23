@@ -2,16 +2,20 @@
 (function() {
 
   define(function(require) {
-    var WaveTrack, WebAudio, exports;
-    WaveTrack = require('./wavetrack');
-    WebAudio = {
-      Defaults: {
+    var URL, WebAudio, exports, wavetrack_worker_js;
+    wavetrack_worker_js = require('text!./wavetrack_worker.js');
+    URL = window.URL || window.webkitURL;
+    WebAudio = (function() {
+
+      WebAudio.prototype.Defaults = {
         fftSize: 1024,
         smoothingTimeConstant: 0.3,
         sampleRate: 44100 / 2
-      },
-      ac: new (window.AudioContext || window.webkitAudioContext),
-      init: function(params) {
+      };
+
+      WebAudio.prototype.ac = new (window.AudioContext || window.webkitAudioContext);
+
+      function WebAudio(params) {
         var currentBuffer;
         params = params || {};
         this.fftSize = params.fftSize || this.Defaults.fftSize;
@@ -24,20 +28,21 @@
         this.proc.connect(this.destination);
         this.dataArray = new Uint8Array(this.analyser.fftSize);
         this.paused = true;
-        return currentBuffer = this.currentBuffer;
-      },
-      setSource: function(source) {
+        currentBuffer = this.currentBuffer;
+      }
+
+      WebAudio.prototype.setSource = function(source) {
         this.source && this.source.disconnect();
         this.source = source;
         this.source.connect(this.analyser);
         return this.source.connect(this.proc);
-      },
-      loadData: function(audioData, cb) {
+      };
+
+      WebAudio.prototype.loadData = function(audioData, cb) {
         var _dfr,
           _this = this;
         _dfr = $.Deferred();
         this.ac.decodeAudioData(audioData, (function(buffer) {
-          console.log(buffer);
           _this.currentBuffer = buffer;
           _this.lastPause = 0;
           _this.lastPlay = 0;
@@ -46,20 +51,20 @@
           return _dfr.resolve();
         }), Error);
         return _dfr;
-      },
-      preSetBuffer: function(buffer) {
+      };
+
+      WebAudio.prototype.preSetBuffer = function(buffer) {
         var c, chan, cloneChan, cn, currentBuffer, currentBufferData, i, step;
         console.time('preSetBuffer');
         currentBuffer = buffer;
         currentBufferData = [];
         step = currentBuffer.sampleRate / this.Defaults.sampleRate;
-        console.log(step);
         c = 0;
         while (c < currentBuffer.numberOfChannels) {
           chan = currentBuffer.getChannelData(c);
           cloneChan = {
             data: [],
-            sampleRate: currentBuffer.sampleRate
+            sampleRate: this.Defaults.sampleRate
           };
           i = 0;
           while (i < chan.length) {
@@ -72,11 +77,13 @@
         }
         this.currentBufferData = currentBufferData;
         return console.timeEnd('preSetBuffer');
-      },
-      getDuration: function() {
+      };
+
+      WebAudio.prototype.getDuration = function() {
         return this.currentBuffer && this.currentBuffer.duration;
-      },
-      play: function(start, end, delay) {
+      };
+
+      WebAudio.prototype.play = function(start, end, delay) {
         if (!this.currentBuffer) {
           return;
         }
@@ -89,65 +96,149 @@
         this.lastPlay = this.ac.currentTime;
         this.source.noteGrainOn(delay, start, end - start);
         return this.paused = false;
-      },
-      pause: function(delay) {
+      };
+
+      WebAudio.prototype.pause = function(delay) {
         if (!this.currentBuffer || this.paused) {
           return;
         }
         this.lastPause += this.ac.currentTime - this.lastPlay;
         this.source.noteOff(delay || 0);
         return this.paused = true;
-      },
-      waveform: function() {
+      };
+
+      WebAudio.prototype.waveform = function() {
         this.analyser.getByteTimeDomainData(this.dataArray);
         return this.dataArray;
-      },
-      frequency: function() {
+      };
+
+      WebAudio.prototype.frequency = function() {
         this.analyser.getByteFrequencyData(this.dataArray);
         return this.dataArray;
-      },
-      "export": function() {
-        var blobURL, channel, channelData, currentBufferData, fromIdx, selection, sequenceList, toIdx, waveTrack, _i, _len;
-        waveTrack = new WaveTrack();
+      };
+
+      WebAudio.prototype["export"] = function() {
+        /*
+              waveTrack = new WaveTrack()
+        
+              currentBufferData = @currentBufferData
+        
+              sequenceList = []
+              selection = @getSelection()
+        
+        
+              for channel in currentBufferData
+                fromIdx = channel.data.length * selection.from
+                toIdx = channel.data.length * selection.to
+        
+        
+                channelData =
+                  sampleRate: @Defaults.sampleRate
+                  data: channel.data.slice(fromIdx, toIdx)
+        
+                sequenceList.push channelData
+        
+        
+              waveTrack.fromAudioSequences(sequenceList)
+              blobURL = waveTrack.toBlobURL("audio/x-wav")
+              dataURL = waveTrack.toDataURL()
+        
+              {
+                dataURL: dataURL
+                blobURL: blobURL
+              }
+        */
+
+        var blobWorker, blobWorker_url, channel, currentBufferData, fromIdx, selection, toIdx, wavetrack_worker, _dfr, _i, _j, _len, _len1;
+        _dfr = $.Deferred();
         currentBufferData = this.currentBufferData;
-        sequenceList = [];
         selection = this.getSelection();
         for (_i = 0, _len = currentBufferData.length; _i < _len; _i++) {
           channel = currentBufferData[_i];
           fromIdx = channel.data.length * selection.from;
           toIdx = channel.data.length * selection.to;
-          channelData = {
-            sampleRate: this.Defaults.sampleRate,
-            data: channel.data.slice(fromIdx, toIdx)
-          };
-          sequenceList.push(channelData);
+          channel.fromIdx = fromIdx;
+          channel.toIdx = toIdx;
         }
-        waveTrack.fromAudioSequences(sequenceList);
-        blobURL = waveTrack.toBlobUrl("application/octet-stream");
-        return blobURL;
-      },
-      setSelection: function(from, to) {
+        console.time('wavetrack_worker');
+        blobWorker = new Blob([wavetrack_worker_js]);
+        blobWorker_url = URL.createObjectURL(blobWorker);
+        wavetrack_worker = new Worker(blobWorker_url);
+        wavetrack_worker.onmessage = function(event) {
+          var blob, blobURL, encodedWave;
+          encodedWave = event.data;
+          blob = new Blob([encodedWave.buffer], {
+            type: "audio/wav"
+          });
+          blobURL = webkitURL.createObjectURL(blob);
+          console.timeEnd('wavetrack_worker');
+          return _dfr.resolve({
+            blobURL: blobURL
+          });
+        };
+        for (_j = 0, _len1 = currentBufferData.length; _j < _len1; _j++) {
+          channel = currentBufferData[_j];
+          wavetrack_worker.postMessage(channel);
+        }
+        return _dfr;
+      };
+
+      WebAudio.prototype.setSelection = function(from, to) {
         return this.selection = {
           from: from,
           to: to
         };
-      },
-      getSelection: function() {
+      };
+
+      WebAudio.prototype.getSelection = function() {
         return this.selection;
-      },
-      getSelectedDuration: function() {
-        var duration, mm, selectedDuration, selection, ss;
+      };
+
+      WebAudio.prototype.timeStamp2text = function(ts) {
+        var mm, ss;
+        mm = Math.floor(ts / 60);
+        ss = (ts - 60 * mm).toFixed(0);
+        return [mm, ss].join(':');
+      };
+
+      WebAudio.prototype.getSelectedDuration = function() {
+        var duration, selectedDuration, selection;
         duration = this.getDuration();
         selection = this.getSelection();
         if (!duration || !selection) {
           return;
         }
         selectedDuration = (selection.to - selection.from) * duration;
-        mm = Math.floor(selectedDuration / 60);
-        ss = (selectedDuration - 60 * mm).toFixed(2);
-        return [mm, ss];
-      }
-    };
+        /*
+              mm = Math.floor(selectedDuration/60)
+              ss = (selectedDuration - 60*mm).toFixed(2)
+              [mm, ss]
+        */
+
+        return this.timeStamp2text(selectedDuration);
+      };
+
+      WebAudio.prototype.destroy = function() {
+        this.proc.disconnect(0);
+        this.pause();
+        if (this.source != null) {
+          delete this.source;
+        }
+        if (this.analyser != null) {
+          delete this.analyser;
+        }
+        this.proc.onaudioprocess = null;
+        if (this.proc != null) {
+          delete this.proc;
+        }
+        if (this.ac != null) {
+          return delete this.ac;
+        }
+      };
+
+      return WebAudio;
+
+    })();
     return exports = WebAudio;
   });
 

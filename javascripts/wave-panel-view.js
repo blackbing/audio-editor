@@ -6,9 +6,10 @@
     wavesurfer = require('./lib/wave/wavesurfer');
     wavePanel_tpl = require('hbs!./wave-panel');
     return WavePanelView = Backbone.View.extend({
-      className: 'audio-editor',
+      className: 'audio-editor-container',
       events: {
-        'mousedown canvas': 'mousedownCanvas'
+        'mousedown canvas': 'mousedownCanvas',
+        'click .playpause': 'playPause'
       },
       mousedownCanvas: function(event) {
         var $target,
@@ -30,25 +31,29 @@
         });
       },
       draggingOnCanvas: function(event) {
-        var deltaX, left, originalPosition;
+        var deltaX, duration, left, maxWidth, originalPosition, width;
         originalPosition = this.$('canvas').data('originalPosition');
         deltaX = event.clientX - originalPosition.x;
         if (!deltaX) {
           return;
         }
+        duration = wavesurfer.webAudio.getDuration();
+        maxWidth = Math.floor(this.options.resizeMaxDuration / duration * this.options.width);
         if (deltaX > 0) {
-          left = originalPosition.x - this.$el.offset().left;
+          left = originalPosition.x - this.$('.audio-editor').offset().left;
         } else {
-          left = originalPosition.x - this.$el.offset().left + deltaX;
+          left = originalPosition.x - this.$('.audio-editor').offset().left + deltaX;
         }
+        width = Math.abs(deltaX);
+        width = width < maxWidth ? width : maxWidth;
         this.audioHandler.css({
-          'width': Math.abs(deltaX),
+          'width': width,
           'left': left
         });
         return this.selectionChanged();
       },
       selectionChanged: function() {
-        var from, left, selectedDuration, to, width;
+        var from, from_text, from_ts, left, selectedDuration, to, to_text, to_ts, width;
         left = parseFloat(this.audioHandler.css('left'));
         width = this.audioHandler.outerWidth();
         from = left / this.canvasWidth;
@@ -56,27 +61,70 @@
         wavesurfer.setSelection(from, to);
         selectedDuration = wavesurfer.webAudio.getSelectedDuration();
         if (selectedDuration) {
-          return this.$('.handler-ts').text("" + selectedDuration[0] + ":" + selectedDuration[1]);
+          from_ts = from * wavesurfer.webAudio.getDuration();
+          from_text = wavesurfer.webAudio.timeStamp2text(from_ts);
+          to_ts = to * wavesurfer.webAudio.getDuration();
+          to_text = wavesurfer.webAudio.timeStamp2text(to_ts);
+          this.$('#handler_left > span').text(from_text);
+          this.$('#handler_right > span').text(to_text);
+          return this.$('.handler-ts').text(selectedDuration);
         }
       },
       selectionDrop: function() {
         var from, left;
         left = parseFloat(this.audioHandler.css('left'));
         from = left / this.canvasWidth;
-        return wavesurfer.playAt(from);
+        wavesurfer.playAt(from);
+        return this.playStauseUpdated();
+      },
+      playStauseUpdated: function() {
+        if (!wavesurfer.webAudio.paused) {
+          return this.$('.playpause').removeClass('play').addClass('pause');
+        } else {
+          return this.$('.playpause').removeClass('pause').addClass('play');
+        }
       },
       exportAudio: function() {
-        return wavesurfer["export"]();
+        var _this = this;
+        wavesurfer.pause();
+        this.$('.audio-editor').addClass('loading');
+        return wavesurfer["export"]().pipe(function(exportObj) {
+          var selectedDuration;
+          selectedDuration = wavesurfer.webAudio.getSelectedDuration();
+          _this.$('.audio-editor').removeClass('loading');
+          return $.extend(exportObj, {
+            filename: _this.$('#audio-name').val(),
+            formated_time_length: selectedDuration
+          });
+        });
       },
       playPause: function() {
-        return wavesurfer.playPause();
+        wavesurfer.playPause();
+        return this.playStauseUpdated();
       },
       updatePlaying: function(percentage) {
-        return this.$('.playing-pointer').css('left', "" + (percentage * 100) + "%");
+        var currentTs, currentTs_text, duration, duration_text;
+        this.$('.playing-pointer').css('left', "" + (percentage * 100) + "%");
+        this.$('.playing-pointer').css('left', "" + (percentage * 100) + "%");
+        this.$('.audio-progress .bar').css('width', "" + (percentage * 100) + "%");
+        duration = wavesurfer.webAudio.getDuration();
+        currentTs = percentage * duration;
+        currentTs_text = wavesurfer.webAudio.timeStamp2text(currentTs);
+        duration_text = wavesurfer.webAudio.timeStamp2text(duration);
+        return this.$('.current-time').text("" + currentTs_text + "/" + duration_text);
       },
       initialize: function(options) {
-        var _this = this;
-        this.$el.append(wavePanel_tpl());
+        this.options = options;
+        options.resizeMaxDuration = options.resizeMaxDuration || 45;
+        options.resizeDefaultDuration = options.resizeDefaultDuration || 30;
+        return this.render();
+      },
+      render: function() {
+        var options, tpl,
+          _this = this;
+        options = this.options;
+        tpl = wavePanel_tpl();
+        this.$el.append(tpl);
         wavesurfer.init({
           canvas: this.$('canvas')[0],
           width: options.width,
@@ -99,7 +147,7 @@
           }
         }).resizable({
           containment: "parent",
-          handles: "e, w",
+          handles: "",
           resize: function() {
             return _this.selectionChanged.apply(_this, arguments);
           },
@@ -107,18 +155,46 @@
             return _this.selectionDrop.apply(_this, arguments);
           }
         });
+        this.$('.handle-bar').draggable({
+          containment: ".audio-progress",
+          axis: 'x',
+          stop: function(event, ui) {
+            var deltaX, from;
+            deltaX = ui.position.left;
+            from = (deltaX / _this.$('.audio-editor').width()) + (parseFloat(_this.$('.bar').prop('style').width) * 0.01);
+            wavesurfer.playAt(from);
+            ui.helper.prop('style').left = '';
+            return _this.playStauseUpdated();
+          }
+        });
         return this.selectionChanged();
       },
       loadFile: function(file) {
         var _dfr,
           _this = this;
-        this.$el.addClass('loading');
+        this.$('#audio-name').attr({
+          placeholder: file.name,
+          value: file.name
+        });
+        this.$('.audio-editor').addClass('loading');
         console.time('loadFile');
         _dfr = wavesurfer.loadFile(file);
         return _dfr.done(function() {
+          var duration;
+          duration = wavesurfer.webAudio.getDuration();
+          _this.audioHandler.css({
+            width: Math.floor(_this.options.resizeDefaultDuration / duration * _this.options.width)
+          }).resizable('option', {
+            maxWidth: Math.floor(_this.options.resizeMaxDuration / duration * _this.options.width)
+          });
           console.timeEnd('loadFile');
-          return _this.$el.removeClass('loading');
+          _this.$('.audio-editor').removeClass('loading');
+          _this.selectionChanged();
+          return _this.updatePlaying(0);
         });
+      },
+      remove: function() {
+        return wavesurfer.destroy();
       }
     });
   });
